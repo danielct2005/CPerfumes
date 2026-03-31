@@ -16,56 +16,50 @@ export default function ProductCard({ perfume }: ProductCardProps) {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
-      {/* Product Image with Next.js Image optimization */}
-      <div className="relative aspect-square bg-gray-100">
+    <div className="group bg-white transition-all duration-300 hover:shadow-xl hover:shadow-black/5">
+      {/* Product Image */}
+      <div className="relative aspect-[4/5] bg-gray-50 overflow-hidden">
         <Image
           src={perfume.imageUrl}
           alt={perfume.name}
           fill
-          className="object-cover"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          loading="lazy"
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 25vw, 25vw"
         />
+        
+        {/* Add button overlay on hover */}
+        <button
+          onClick={handleAddToCart}
+          className="absolute bottom-4 left-4 right-4 py-3 bg-black text-white text-sm font-medium tracking-wide opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0"
+        >
+          Añadir al carrito
+        </button>
       </div>
 
       {/* Product Info */}
       <div className="p-4">
-        {/* Category Badge */}
-        <span className="inline-block px-2 py-1 text-xs font-semibold rounded-full bg-purple-100 text-purple-700 mb-2">
-          {perfume.category.charAt(0).toUpperCase() + perfume.category.slice(1)}
+        {/* Category */}
+        <span className="text-xs text-gray-400 uppercase tracking-wider">
+          {perfume.category}
         </span>
 
         {/* Name and Brand */}
-        <h3 className="text-lg font-semibold text-gray-900 truncate">
+        <h3 className="text-base font-medium text-black mt-1 leading-tight">
           {perfume.name}
         </h3>
-        <p className="text-sm text-gray-500 mb-2">{perfume.brand}</p>
+        <p className="text-sm text-gray-400 mt-0.5">{perfume.brand}</p>
 
-        {/* Notes */}
-        <div className="flex flex-wrap gap-1 mb-3">
-          {perfume.notes.slice(0, 3).map((note, index) => (
-            <span
-              key={index}
-              className="px-2 py-0.5 text-xs bg-gray-100 text-gray-600 rounded"
-            >
-              {note}
-            </span>
-          ))}
-        </div>
+        {/* Notes - subtle */}
+        {perfume.notes && perfume.notes.length > 0 && (
+          <p className="text-xs text-gray-300 mt-2">
+            {perfume.notes.slice(0, 3).join(' • ')}
+          </p>
+        )}
 
-        {/* Price and Add Button */}
-        <div className="flex items-center justify-between mt-3">
-          <span className="text-xl font-bold text-purple-600">
-            ${perfume.price.toLocaleString('es-CL')}
-          </span>
-          <button
-            onClick={handleAddToCart}
-            className="px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition-colors duration-200"
-          >
-            Añadir
-          </button>
-        </div>
+        {/* Price */}
+        <p className="text-lg font-semibold text-black mt-3">
+          ${perfume.price.toLocaleString('es-CL')}
+        </p>
       </div>
     </div>
   );

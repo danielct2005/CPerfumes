@@ -8,13 +8,13 @@ export default function Header() {
   const itemCount = getItemCount();
 
   return (
-    <header className="sticky top-0 z-50 bg-white shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+    <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+        <div className="flex items-center justify-between h-14">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
-            <span className="text-2xl">🌸</span>
-            <span className="text-xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+            <span className="text-2xl">◆</span>
+            <span className="text-lg font-medium tracking-wide text-black">
               CPerfumes
             </span>
           </Link>
@@ -22,7 +22,7 @@ export default function Header() {
           {/* Admin Link */}
           <Link
             href="/admin"
-            className="text-sm text-gray-500 hover:text-purple-600 transition-colors"
+            className="text-sm text-gray-400 hover:text-black transition-colors duration-200"
           >
             Admin
           </Link>
