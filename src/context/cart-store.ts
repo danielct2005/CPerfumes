@@ -87,15 +87,14 @@ export function generateWhatsAppMessage(
     })
     .join('\n\n');
 
-  const message = `🛒 *NUEVO PEDIDO - CPerfumes*\n\n` +
+  const message = `🛒 *PEDIDO - CPerfumes*\n\n` +
     `📅 Fecha: ${date}\n` +
     `🕐 Hora: ${time}\n\n` +
     `━━━━━━━━━━━━━━━━━━━━━\n\n` +
     `📦 *PRODUCTOS:*\n\n${productList}\n\n` +
     `━━━━━━━━━━━━━━━━━━━━━\n\n` +
     `💰 *TOTAL:* $${total.toLocaleString('es-CL')}\n\n` +
-    `✅ Por favor confirmar disponibilidad.\n` +
-    `¡Gracias por su compra! 🌸`;
+    `¿Tienes disponibilidad de estos perfumes?`;
 
   return `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
 }
