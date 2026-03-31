@@ -83,7 +83,7 @@ export default function Dashboard() {
     formData.append('image', file);
     
     // Using ImgBB free API - get your own free key at https://api.imgbb.com/
-    const apiKey = 'a8e8c9c9a9e3e9c9a9e3e9c9a9e3e9c9a'; // Free tier key (replace with your own)
+    const apiKey = '0d9f404ba349bee6d17ebae53d1b56e3';
     
     const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
       method: 'POST',
