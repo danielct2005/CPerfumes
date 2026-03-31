@@ -68,9 +68,9 @@ export default function Dashboard() {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Validate file size (max 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        alert('La imagen debe ser menor a 5MB');
+      // Validate file size (max 16MB for ImgBB)
+      if (file.size > 16 * 1024 * 1024) {
+        alert('La imagen debe ser menor a 16MB');
         return;
       }
       setImageFile(file);
@@ -101,8 +101,10 @@ export default function Dashboard() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Image file:', imageFile);
+    console.log('Image preview:', imagePreview);
     if (!imageFile) {
-      alert('Por favor selecciona una imagen');
+      alert('Por favor selecciona una imagen del perfume');
       return;
     }
 
@@ -137,7 +139,7 @@ export default function Dashboard() {
       await fetchProducts();
     } catch (error) {
       console.error('Error saving perfume:', error);
-      alert('Error al guardar el perfume. Intenta con una imagen más pequeña.');
+      alert('Error al guardar el perfume. Verifica la conexión e intenta con una imagen más pequeña.');
     } finally {
       setSaving(false);
       setUploading(false);
