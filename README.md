@@ -1,136 +1,52 @@
-# CPerfumes - Catálogo de Perfumes
+# CPerfumes
+Catalogo Tienda Perfumes
+"Necesito desarrollar un catálogo web de perfumes 'Mobile-First' utilizando Next.js (App Router). El sitio es para una tienda que vende por Instagram. Los clientes deben poder ver productos, añadirlos a un carrito local y finalizar la compra enviando un mensaje detallado por WhatsApp al vendedor. No se requiere pasarela de pago ni login de clientes."
 
-Catálogo web Mobile-First de perfumes desarrollado con Next.js 14+ (App Router), Firebase y Tailwind CSS.
+Stack Tecnológico:
 
-## Características
+Framework: Next.js 14+ (App Router).
 
-- 🛒 Carrito de compras con persistencia en localStorage
-- 📱 Diseño Mobile-First
-- 🔍 Filtros por categoría (Hombre, Mujer, Unisex)
-- 💬 Checkout por WhatsApp
-- 🔧 Panel de administración con CRUD completo
-- 📸 Subida de imágenes a Firebase Storage
-- 🖼️ Optimización de imágenes con Next.js Image
+Estilos: Tailwind CSS.
 
-## Estructura de Carpetas
+Base de Datos / Storage: Firebase (Firestore para la data y Firebase Storage para las fotos).
 
-```
-perfumeria/
-├── src/
-│   ├── app/
-│   │   ├── admin/
-│   │   │   ├── dashboard/
-│   │   │   │   └── page.tsx      # Dashboard admin con CRUD
-│   │   │   └── page.tsx          # Login de admin
-│   │   ├── globals.css           # Estilos globales
-│   │   ├── layout.tsx            # Layout principal
-│   │   ├── page.tsx              # Página principal
-│   │   └── providers.tsx         # Providers de React
-│   ├── components/
-│   │   ├── CartButton.tsx         # Botón flotante del carrito
-│   │   ├── FilterBar.tsx         # Barras de filtros
-│   │   ├── Header.tsx             # Header con logo
-│   │   ├── ProductCard.tsx        # Card de producto
-│   │   └── ProductGrid.tsx        # Grid de productos
-│   ├── context/
-│   │   ├── cart-context.tsx       # Provider del carrito
-│   │   └── cart-store.ts         # Zustand store con localStorage
-│   ├── lib/
-│   │   └── firebase.js           # Configuración de Firebase
-│   └── types/
-│       └── index.ts              # Tipos de TypeScript
-├── public/
-├── .env.local                    # Variables de entorno
-├── firestore.rules               # Reglas de seguridad
-├── next.config.js                # Config de Next.js
-├── package.json
-├── tailwind.config.js            # Config de Tailwind
-└── tsconfig.json                 # Config de TypeScript
-```
+Despliegue: Vercel.
 
-## Instalación
+Estado: React Context o Zustand para el carrito de compras.
 
-1. Clona el repositorio:
-```bash
-git clone https://github.com/danielct2005/CPerfumes.git
-cd CPerfumes
-```
+Estructura y Funcionalidades Requeridas:
 
-2. Instala las dependencias:
-```bash
-npm install
-```
+Página Principal (/):
 
-3. Configura las variables de entorno:
-Edita `.env.local` con tus credenciales de Firebase.
+Header con logo y botón flotante de carrito con contador.
 
-4. Ejecuta el servidor de desarrollo:
-```bash
-npm run dev
-```
+Sección de filtros rápidos por categorías (Hombre, Mujer, Unisex, Notas Olfativas).
 
-## Configuración de Firebase
+Grid de productos con carga diferida (Lazy Loading). Cada card debe mostrar: Imagen, Nombre, Notas, Precio y botón 'Añadir al carrito'.
 
-### 1. Crea un proyecto en Firebase Console
-- Ve a [Firebase Console](https://console.firebase.google.com/)
-- Crea un nuevo proyecto
+Lógica de Carrito:
 
-### 2. Habilita Firestore
-- Ve a "Firestore Database" → "Create database"
-- Selecciona la ubicación más cercana
-- Inicia en modo de prueba (luego configura las reglas de seguridad)
+Persistencia en localStorage.
 
-### 3. Habilita Firebase Storage
-- Ve a "Storage" → "Get started"
-- Inicia en modo de prueba
+Al hacer clic en 'Finalizar Pedido', debe abrir un enlace de WhatsApp (wa.me) con un mensaje formateado: "Hola, me interesan estos perfumes: [Lista de Productos con Cantidades] - Total: [Suma Total]".
 
-### 4. Crea un usuario admin
-- Ve a "Authentication" → "Add user"
-- Crea un usuario con email: `admin@perfumeria.com`
+Panel de Administración (/admin):
 
-### 5. Obtiene las credenciales
-- Ve a "Project Settings" → "General"
-- Copia la configuración y actualiza `.env.local`
+Ruta protegida por un middleware simple o un check de Auth de Firebase.
 
-## Variables de Entorno
+CRUD completo: Formulario para subir nuevos perfumes.
 
-```env
-NEXT_PUBLIC_FIREBASE_API_KEY=tu_api_key
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=tu_proyecto.firebaseapp.com
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=tu_project_id
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=tu_proyecto.appspot.com
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=tu_sender_id
-NEXT_PUBLIC_FIREBASE_APP_ID=tu_app_id
-NEXT_PUBLIC_WHATSAPP_NUMBER=+1234567890
-```
+Importante: El input de imagen debe subir el archivo a Firebase Storage y guardar la URL resultante en el documento de Firestore.
 
-## Despliegue en Vercel
+Instrucciones Técnicas de Precaución:
 
-1. Conecta tu repositorio a Vercel
-2. Agrega las variables de entorno en Vercel Project Settings
-3. Despliega
+Optimización: Usa el componente <Image /> de Next.js para todas las fotos de los perfumes.
 
-## Reglas de Seguridad Firestore
+Firebase Setup: Genera un archivo lib/firebase.js para la configuración y exporta las instancias de db, storage y auth.
 
-```firestore
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /perfumes/{perfumeId} {
-      allow read: if true;
-      allow write: if request.auth != null && request.auth.token.email == 'admin@perfumeria.com';
-    }
-  }
-}
-```
+Seguridad: Incluye un ejemplo de las firestore.rules para permitir lectura pública y escritura solo a usuarios autenticados.
 
-## Tecnologías
+Variables de Entorno: Utiliza .env.local para todas las credenciales de Firebase.
 
-- [Next.js 14](https://nextjs.org/) - Framework React
-- [Firebase](https://firebase.google.com/) - Backend
-- [Tailwind CSS](https://tailwindcss.com/) - Estilos
-- [Zustand](https://zustand-demo.pmnd.rs/) - Gestión de estado
-
-## Licencia
-
-MIT
+Entregable:
+"Proporcióname la estructura de carpetas sugerida, el código para el Contexto del Carrito, el componente de la Card de Producto, y la lógica de envío a WhatsApp."
