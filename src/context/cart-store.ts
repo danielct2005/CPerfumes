@@ -68,11 +68,34 @@ export function generateWhatsAppMessage(
   total: number,
   phoneNumber: string
 ): string {
-  const productList = items
-    .map((item) => `${item.perfume.name} (x${item.quantity}) - $${item.perfume.price * item.quantity}`)
-    .join('\n• ');
+  const date = new Date().toLocaleDateString('es-CL', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  });
+  
+  const time = new Date().toLocaleTimeString('es-CL', {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
 
-  const message = `*Nuevo pedido de Perfumería*%0A%0A*Productos:*%0A• ${productList}%0A%0A*Total: $${total.toFixed(2)}*%0A%0APor favor, confirma disponibilidad.`;
+  // Format each product nicely
+  const productList = items
+    .map((item) => {
+      const subtotal = item.perfume.price * item.quantity;
+      return `• ${item.perfume.brand} ${item.perfume.name}\n  Cantidad: ${item.quantity} x $${item.perfume.price.toLocaleString('es-CL')} = $${subtotal.toLocaleString('es-CL')}`;
+    })
+    .join('\n\n');
+
+  const message = `🛒 *NUEVO PEDIDO - CPerfumes*\n\n` +
+    `📅 Fecha: ${date}\n` +
+    `🕐 Hora: ${time}\n\n` +
+    `━━━━━━━━━━━━━━━━━━━━━\n\n` +
+    `📦 *PRODUCTOS:*\n\n${productList}\n\n` +
+    `━━━━━━━━━━━━━━━━━━━━━\n\n` +
+    `💰 *TOTAL:* $${total.toLocaleString('es-CL')}\n\n` +
+    `✅ Por favor confirmar disponibilidad.\n` +
+    `¡Gracias por su compra! 🌸`;
 
   return `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
 }
