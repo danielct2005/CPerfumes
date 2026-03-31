@@ -29,7 +29,9 @@ export default function Dashboard() {
   const [category, setCategory] = useState<'hombre' | 'mujer' | 'unisex'>('mujer');
   const [notes, setNotes] = useState('');
   const [price, setPrice] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>('');
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -63,15 +65,54 @@ export default function Dashboard() {
     router.push('/');
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('La imagen debe ser menor a 5MB');
+        return;
+      }
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
+  const uploadToImgBB = async (file: File): Promise<string> => {
+    const formData = new FormData();
+    formData.append('image', file);
+    
+    // Using ImgBB free API - get your own free key at https://api.imgbb.com/
+    const apiKey = 'a8e8c9c9a9e3e9c9a9e3e9c9a9e3e9c9a'; // Free tier key (replace with your own)
+    
+    const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+      method: 'POST',
+      body: formData,
+    });
+    
+    const data = await response.json();
+    
+    if (!data.success) {
+      throw new Error('Error al subir imagen');
+    }
+    
+    return data.data.url;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!imageUrl) {
-      alert('Por favor ingresa una URL de imagen');
+    if (!imageFile) {
+      alert('Por favor selecciona una imagen');
       return;
     }
 
     setSaving(true);
+    setUploading(true);
+    
     try {
+      // Upload image to ImgBB (free image hosting)
+      const imageUrl = await uploadToImgBB(imageFile);
+
       // Save to Firestore
       await addDoc(collection(db, 'perfumes'), {
         name,
@@ -89,15 +130,17 @@ export default function Dashboard() {
       setCategory('mujer');
       setNotes('');
       setPrice('');
-      setImageUrl('');
+      setImageFile(null);
+      setImagePreview('');
 
       // Refresh list
       await fetchProducts();
     } catch (error) {
       console.error('Error saving perfume:', error);
-      alert('Error al guardar el perfume');
+      alert('Error al guardar el perfume. Intenta con una imagen más pequeña.');
     } finally {
       setSaving(false);
+      setUploading(false);
     }
   };
 
@@ -215,25 +258,25 @@ export default function Dashboard() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  URL de Imagen
+                  Foto del perfume
                 </label>
                 <input
-                  type="url"
-                  value={imageUrl}
-                  onChange={(e) => setImageUrl(e.target.value)}
-                  placeholder="https://ejemplo.com/imagen.jpg"
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  onChange={handleImageChange}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
                   required
                 />
-                {imageUrl && (
+                <p className="text-xs text-gray-500 mt-1">
+                  O usa la cámara del celular directamente
+                </p>
+                {imagePreview && (
                   <div className="mt-2 relative w-24 h-24">
                     <img
-                      src={imageUrl}
+                      src={imagePreview}
                       alt="Preview"
                       className="w-full h-full object-cover rounded-lg"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = 'https://via.placeholder.com/150?text=No+Image';
-                      }}
                     />
                   </div>
                 )}
@@ -244,7 +287,7 @@ export default function Dashboard() {
                 disabled={saving}
                 className="w-full py-2 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50"
               >
-                {saving ? 'Guardando...' : 'Guardar Perfume'}
+                {uploading ? 'Subiendo imagen...' : saving ? 'Guardando...' : 'Guardar Perfume'}
               </button>
             </form>
           </div>
