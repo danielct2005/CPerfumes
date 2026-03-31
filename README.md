@@ -1,52 +1,31 @@
-# CPerfumes
-Catalogo Tienda Perfumes
-"Necesito desarrollar un catálogo web de perfumes 'Mobile-First' utilizando Next.js (App Router). El sitio es para una tienda que vende por Instagram. Los clientes deben poder ver productos, añadirlos a un carrito local y finalizar la compra enviando un mensaje detallado por WhatsApp al vendedor. No se requiere pasarela de pago ni login de clientes."
+Estoy trabajando en una tienda de perfumes llamada CPerfumes desarrollada con Next.js y Tailwind CSS. Necesito implementar las siguientes mejoras técnicas manteniendo la coherencia visual con la landing page principal (/).
 
-Stack Tecnológico:
+Tareas a realizar:
 
-Framework: Next.js 14+ (App Router).
+Galería de Imágenes Dinámica:
 
-Estilos: Tailwind CSS.
+Modifica el esquema del producto para aceptar un array de strings (URLs) en lugar de una sola imagen.
 
-Base de Datos / Storage: Firebase (Firestore para la data y Firebase Storage para las fotos).
+Implementa un componente de Carousel/Slider (puedes usar swiper o framer-motion) en la vista de detalle del producto que permita deslizar entre las fotos.
 
-Despliegue: Vercel.
+Unificación de UI (Dashboard Admin):
 
-Estado: React Context o Zustand para el carrito de compras.
+Rediseña las rutas /admin y /admin/dashboard para que utilicen los mismos componentes globales (Navbar, Footer, Tipografía y Paleta de colores) que la página principal.
 
-Estructura y Funcionalidades Requeridas:
+Asegúrate de que el layout del panel de administración sea consistente con la estética de marca de la tienda.
 
-Página Principal (/):
+Branding e Identidad:
 
-Header con logo y botón flotante de carrito con contador.
+Actualiza el Header y Footer para incluir el logotipo oficial y el nombre "CPerfumes".
 
-Sección de filtros rápidos por categorías (Hombre, Mujer, Unisex, Notas Olfativas).
+Configura los metadatos de Next.js para que el nombre de la tienda aparezca correctamente en la pestaña del navegador.
 
-Grid de productos con carga diferida (Lazy Loading). Cada card debe mostrar: Imagen, Nombre, Notas, Precio y botón 'Añadir al carrito'.
+Lógica de Filtros y Ordenamiento:
 
-Lógica de Carrito:
+Crea una función de filtrado para la lista de productos que incluya:
 
-Persistencia en localStorage.
+Precio: Menor a Mayor / Precio: Mayor a Menor.
 
-Al hacer clic en 'Finalizar Pedido', debe abrir un enlace de WhatsApp (wa.me) con un mensaje formateado: "Hola, me interesan estos perfumes: [Lista de Productos con Cantidades] - Total: [Suma Total]".
+Etiquetas: Tendencias / Más Vendidos.
 
-Panel de Administración (/admin):
-
-Ruta protegida por un middleware simple o un check de Auth de Firebase.
-
-CRUD completo: Formulario para subir nuevos perfumes.
-
-Importante: El input de imagen debe subir el archivo a Firebase Storage y guardar la URL resultante en el documento de Firestore.
-
-Instrucciones Técnicas de Precaución:
-
-Optimización: Usa el componente <Image /> de Next.js para todas las fotos de los perfumes.
-
-Firebase Setup: Genera un archivo lib/firebase.js para la configuración y exporta las instancias de db, storage y auth.
-
-Seguridad: Incluye un ejemplo de las firestore.rules para permitir lectura pública y escritura solo a usuarios autenticados.
-
-Variables de Entorno: Utiliza .env.local para todas las credenciales de Firebase.
-
-Entregable:
-"Proporcióname la estructura de carpetas sugerida, el código para el Contexto del Carrito, el componente de la Card de Producto, y la lógica de envío a WhatsApp."
+Asegúrate de que el estado de los filtros se maneje de forma eficiente (usando useState o parámetros de URL).
