@@ -318,7 +318,7 @@ export default function Dashboard() {
                     </h3>
                     <p className="text-sm text-gray-500">{product.brand}</p>
                     <p className="text-sm font-semibold text-purple-600">
-                      ${product.price.toFixed(2)}
+                      ${product.price.toLocaleString('es-CL')}
                     </p>
                   </div>
                   <button

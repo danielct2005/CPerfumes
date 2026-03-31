@@ -57,7 +57,7 @@ export default function ProductCard({ perfume }: ProductCardProps) {
         {/* Price and Add Button */}
         <div className="flex items-center justify-between mt-3">
           <span className="text-xl font-bold text-purple-600">
-            ${perfume.price.toFixed(2)}
+            ${perfume.price.toLocaleString('es-CL')}
           </span>
           <button
             onClick={handleAddToCart}

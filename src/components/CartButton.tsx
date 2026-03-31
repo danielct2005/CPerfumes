@@ -42,7 +42,7 @@ export default function CartButton() {
                       {item.perfume.name}
                     </p>
                     <p className="text-xs text-gray-500">
-                      x{item.quantity} - ${(item.perfume.price * item.quantity).toFixed(2)}
+                      x{item.quantity} - ${(item.perfume.price * item.quantity).toLocaleString('es-CL')}
                     </p>
                   </div>
                 </div>
@@ -55,7 +55,7 @@ export default function CartButton() {
               <div className="flex justify-between items-center mb-3">
                 <span className="font-semibold">Total:</span>
                 <span className="text-lg font-bold text-purple-600">
-                  ${total.toFixed(2)}
+                  ${total.toLocaleString('es-CL')}
                 </span>
               </div>
               <button
