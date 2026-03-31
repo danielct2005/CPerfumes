@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { auth, db, storage } from '@/lib/firebase';
+import { auth, db } from '@/lib/firebase';
 import { signOut, onAuthStateChanged } from 'firebase/auth';
 import {
   collection,
@@ -13,7 +13,6 @@ import {
   query,
   orderBy,
 } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { Perfume } from '@/types';
 import Link from 'next/link';
 
@@ -22,9 +21,6 @@ export default function Dashboard() {
   const [products, setProducts] = useState<Perfume[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string>('');
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
   // Form state
@@ -33,6 +29,7 @@ export default function Dashboard() {
   const [category, setCategory] = useState<'hombre' | 'mujer' | 'unisex'>('mujer');
   const [notes, setNotes] = useState('');
   const [price, setPrice] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -66,28 +63,15 @@ export default function Dashboard() {
     router.push('/');
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setImageFile(file);
-      setImagePreview(URL.createObjectURL(file));
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!imageFile) {
-      alert('Por favor selecciona una imagen');
+    if (!imageUrl) {
+      alert('Por favor ingresa una URL de imagen');
       return;
     }
 
     setSaving(true);
     try {
-      // Upload image to Firebase Storage
-      const imageRef = ref(storage, `perfumes/${Date.now()}_${imageFile.name}`);
-      await uploadBytes(imageRef, imageFile);
-      const imageUrl = await getDownloadURL(imageRef);
-
       // Save to Firestore
       await addDoc(collection(db, 'perfumes'), {
         name,
@@ -105,11 +89,7 @@ export default function Dashboard() {
       setCategory('mujer');
       setNotes('');
       setPrice('');
-      setImageFile(null);
-      setImagePreview('');
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
+      setImageUrl('');
 
       // Refresh list
       await fetchProducts();
@@ -235,22 +215,25 @@ export default function Dashboard() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Imagen
+                  URL de Imagen
                 </label>
                 <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
+                  type="url"
+                  value={imageUrl}
+                  onChange={(e) => setImageUrl(e.target.value)}
+                  placeholder="https://ejemplo.com/imagen.jpg"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
                   required
                 />
-                {imagePreview && (
+                {imageUrl && (
                   <div className="mt-2 relative w-24 h-24">
                     <img
-                      src={imagePreview}
+                      src={imageUrl}
                       alt="Preview"
                       className="w-full h-full object-cover rounded-lg"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = 'https://via.placeholder.com/150?text=No+Image';
+                      }}
                     />
                   </div>
                 )}
