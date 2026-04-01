@@ -8,14 +8,14 @@ export default function Header() {
     <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100">
       <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
         <div className="flex items-center justify-between h-14">
-          {/* Logo */}
+          {/* Logo - FRAGANZZA texto horizontal */}
           <Link href="/" className="flex items-center">
-              <Image
+            <Image
               src="https://i.ibb.co/sp4k4NKk/logo-text.png"
               alt="FRAGANZZA"
-              width={140}
+              width={160}
               height={45}
-              className="h-auto w-auto"
+              className="h-10 w-auto object-contain"
               priority
             />
           </Link>

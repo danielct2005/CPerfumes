@@ -9,6 +9,7 @@ import {
   addDoc,
   getDocs,
   deleteDoc,
+  updateDoc,
   doc,
   query,
   orderBy,
@@ -26,13 +27,15 @@ export default function Dashboard() {
   const router = useRouter();
 
   // Form state
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [name, setName] = useState('');
   const [brand, setBrand] = useState('');
   const [category, setCategory] = useState<'hombre' | 'mujer' | 'unisex'>('mujer');
   const [notes, setNotes] = useState('');
   const [price, setPrice] = useState('');
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string>('');
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
+  const [existingImages, setExistingImages] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
   const [tags, setTags] = useState<string[]>([]);
 
@@ -68,16 +71,43 @@ export default function Dashboard() {
     router.push('/');
   };
 
+  // Formatear número con separadores de miles
+  const formatNumber = (value: string): string => {
+    const numbers = value.replace(/[^\d]/g, '');
+    if (!numbers) return '';
+    return parseInt(numbers, 10).toLocaleString('es-CL');
+  };
+
+  // Obtener número limpio sin separadores
+  const parseNumber = (value: string): number => {
+    return parseInt(value.replace(/\./g, ''), 10) || 0;
+  };
+
+  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatNumber(e.target.value);
+    setPrice(formatted);
+  };
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
+    const files = Array.from(e.target.files || []);
+    if (files.length < 2) {
+      alert('Selecciona al menos 2 fotos');
+      return;
+    }
+    
+    // Validar tamaño de archivos
+    for (const file of files) {
       if (file.size > 16 * 1024 * 1024) {
-        alert('La imagen debe ser menor a 16MB');
+        alert('Cada imagen debe ser menor a 16MB');
         return;
       }
-      setImageFile(file);
-      setImagePreview(URL.createObjectURL(file));
     }
+    
+    setImageFiles(files);
+    
+    // Crear previews
+    const previews = files.map(file => URL.createObjectURL(file));
+    setImagePreviews(previews);
   };
 
   const uploadToImgBB = async (file: File): Promise<string> => {
@@ -102,8 +132,9 @@ export default function Dashboard() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!imageFile) {
-      alert('Por favor selecciona una imagen del perfume');
+    
+    if (imageFiles.length === 0 && existingImages.length === 0) {
+      alert('Por favor selecciona al menos 2 fotos del perfume');
       return;
     }
 
@@ -111,36 +142,73 @@ export default function Dashboard() {
     setUploading(true);
     
     try {
-      const imageUrl = await uploadToImgBB(imageFile);
+      let finalImages: string[] = [...existingImages];
+      
+      // Subir nuevas imágenes si hay
+      if (imageFiles.length > 0) {
+        const uploadedUrls = await Promise.all(
+          imageFiles.map(file => uploadToImgBB(file))
+        );
+        finalImages = [...finalImages, ...uploadedUrls];
+      }
 
-      await addDoc(collection(db, 'perfumes'), {
+      const perfumeData = {
         name,
         brand,
         category,
         notes: notes.split(',').map((n) => n.trim()),
-        price: parseFloat(price),
-        imageUrl,
+        price: parseNumber(price),
+        imageUrl: finalImages[0], // Primera imagen como principal
+        images: finalImages, // Array completo de imágenes
         tags,
-        createdAt: Date.now(),
-      });
+        createdAt: editingId 
+          ? products.find(p => p.id === editingId)?.createdAt || Date.now()
+          : Date.now(),
+      };
 
-      setName('');
-      setBrand('');
-      setCategory('mujer');
-      setNotes('');
-      setPrice('');
-      setImageFile(null);
-      setImagePreview('');
-      setTags([]);
+      if (editingId) {
+        // Actualizar documento existente
+        await updateDoc(doc(db, 'perfumes', editingId), perfumeData);
+      } else {
+        // Crear nuevo documento
+        await addDoc(collection(db, 'perfumes'), perfumeData);
+      }
 
+      resetForm();
       await fetchProducts();
     } catch (error) {
       console.error('Error saving perfume:', error);
-      alert('Error al guardar el perfume. Verifica la conexión e intenta con una imagen más pequeña.');
+      alert('Error al guardar el perfume. Verifica la conexión e intenta con imágenes más pequeñas.');
     } finally {
       setSaving(false);
       setUploading(false);
     }
+  };
+
+  const handleEdit = (product: Perfume) => {
+    setEditingId(product.id);
+    setName(product.name);
+    setBrand(product.brand);
+    setCategory(product.category);
+    setNotes(product.notes?.join(', ') || '');
+    setPrice(product.price.toLocaleString('es-CL'));
+    setTags(product.tags || []);
+    setExistingImages(product.images || [product.imageUrl]);
+    setImageFiles([]);
+    setImagePreviews([]);
+  };
+
+  const resetForm = () => {
+    setEditingId(null);
+    setName('');
+    setBrand('');
+    setCategory('mujer');
+    setNotes('');
+    setPrice('');
+    setImageFiles([]);
+    setImagePreviews([]);
+    setExistingImages([]);
+    setTags([]);
   };
 
   const handleDelete = async (id: string) => {
@@ -198,11 +266,19 @@ export default function Dashboard() {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Add Product Form */}
+          {/* Add/Edit Product Form */}
           <div className="bg-white p-6">
             <h2 className="text-lg font-medium text-black tracking-wide mb-6">
-              Añadir Nuevo Perfume
+              {editingId ? 'Editar Perfume' : 'Añadir Nuevo Perfume'}
             </h2>
+            {editingId && (
+              <button
+                onClick={resetForm}
+                className="mb-4 text-sm text-gray-400 hover:text-black transition-colors"
+              >
+                ← Cancelar edición
+              </button>
+            )}
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm text-gray-500 mb-1">
@@ -293,10 +369,10 @@ export default function Dashboard() {
                   Precio
                 </label>
                 <input
-                  type="number"
-                  step="0.01"
+                  type="text"
                   value={price}
-                  onChange={(e) => setPrice(e.target.value)}
+                  onChange={handlePriceChange}
+                  placeholder="1.000.000"
                   className="w-full px-4 py-2 border border-gray-200 bg-gray-50 text-black text-sm tracking-wide focus:outline-none focus:border-black transition-colors"
                   required
                 />
@@ -304,26 +380,47 @@ export default function Dashboard() {
 
               <div>
                 <label className="block text-sm text-gray-500 mb-1">
-                  Foto del perfume
+                  Fotos del perfume (mínimo 2)
                 </label>
                 <input
                   type="file"
                   accept="image/*"
+                  multiple
                   capture="environment"
                   onChange={handleImageChange}
-                  className="w-full px-4 py-2 border border-gray-200 bg-gray-50 text-black text-sm tracking-wide focus:outline-none focus:border-black transition-colors"
-                  required
+                  className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-black file:text-white hover:file:bg-gray-800"
                 />
                 <p className="text-xs text-gray-300 mt-1">
                   O usa la cámara del celular directamente
                 </p>
-                {imagePreview && (
-                  <div className="mt-2 relative w-24 h-24">
-                    <img
-                      src={imagePreview}
-                      alt="Preview"
-                      className="w-full h-full object-cover rounded-md"
-                    />
+                
+                {/* Previews de nuevas imágenes */}
+                {imagePreviews.length > 0 && (
+                  <div className="flex gap-2 mt-2 flex-wrap">
+                    {imagePreviews.map((preview, idx) => (
+                      <div key={idx} className="relative w-20 h-20">
+                        <img
+                          src={preview}
+                          alt={`Preview ${idx + 1}`}
+                          className="w-full h-full object-cover rounded-md"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
+                
+                {/* Imágenes existentes (al editar) */}
+                {existingImages.length > 0 && imagePreviews.length === 0 && (
+                  <div className="flex gap-2 mt-2 flex-wrap">
+                    {existingImages.map((img, idx) => (
+                      <div key={idx} className="relative w-20 h-20">
+                        <img
+                          src={img}
+                          alt={`Imagen ${idx + 1}`}
+                          className="w-full h-full object-cover rounded-md"
+                        />
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>
@@ -333,7 +430,13 @@ export default function Dashboard() {
                 disabled={saving}
                 className="w-full py-3 bg-black text-white text-sm font-medium tracking-wide hover:bg-gray-800 transition-colors disabled:opacity-50"
               >
-                {uploading ? 'Subiendo imagen...' : saving ? 'Guardando...' : 'Guardar Perfume'}
+                {uploading 
+                  ? 'Subiendo imágenes...' 
+                  : saving 
+                    ? 'Guardando...' 
+                    : editingId 
+                      ? 'Actualizar Perfume' 
+                      : 'Guardar Perfume'}
               </button>
             </form>
           </div>
@@ -377,6 +480,30 @@ export default function Dashboard() {
                       </div>
                     )}
                   </div>
+                  
+                  {/* Edit Button */}
+                  <button
+                    onClick={() => handleEdit(product)}
+                    className="p-2 text-gray-300 hover:text-black transition-colors"
+                    title="Editar"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                      />
+                    </svg>
+                  </button>
+                  
+                  {/* Delete Button */}
                   <button
                     onClick={() => handleDelete(product.id)}
                     className="p-2 text-gray-300 hover:text-red-500 transition-colors"

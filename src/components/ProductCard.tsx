@@ -14,7 +14,7 @@ export default function ProductCard({ perfume }: ProductCardProps) {
 
   // Soporte para múltiples imágenes
   const images = perfume.images?.length ? perfume.images : [perfume.imageUrl];
-  const mainImage = images[0];
+  const hasMultipleImages = images.length > 1;
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -24,15 +24,48 @@ export default function ProductCard({ perfume }: ProductCardProps) {
 
   return (
     <Link href={`/product/${perfume.id}`} className="block group">
-      {/* Product Image */}
+      {/* Product Image - Carrusel con scroll snap */}
       <div className="relative aspect-[4/5] bg-gray-50 overflow-hidden">
-        <Image
-          src={mainImage}
-          alt={perfume.name}
-          fill
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 25vw, 25vw"
-        />
+        {hasMultipleImages ? (
+          // Carrusel deslizable para múltiples imágenes
+          <div className="flex overflow-x-auto snap-x snap-mandatory scrollbar-hide w-full h-full">
+            {images.map((img, idx) => (
+              <div 
+                key={idx} 
+                className="flex-shrink-0 w-full h-full snap-center relative"
+              >
+                <Image
+                  src={img}
+                  alt={`${perfume.name} - Imagen ${idx + 1}`}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 25vw, 25vw"
+                />
+              </div>
+            ))}
+          </div>
+        ) : (
+          // Imagen única
+          <Image
+            src={images[0]}
+            alt={perfume.name}
+            fill
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 25vw, 25vw"
+          />
+        )}
+        
+        {/* Indicador de carrusel */}
+        {hasMultipleImages && (
+          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
+            {images.map((_, idx) => (
+              <div 
+                key={idx} 
+                className="w-1.5 h-1.5 rounded-full bg-white/70"
+              />
+            ))}
+          </div>
+        )}
         
         {/* Add button overlay on hover */}
         <button

@@ -70,14 +70,14 @@ export default function Home() {
       <Header />
       
       <div className="flex-1 max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-12 w-full">
-        {/* Banner Horizontal */}
-        <div className="mb-12">
+        {/* Banner - Isotipo FRAGANZZA */}
+        <div className="mb-12 flex justify-center">
           <Image
-            src="https://i.ibb.co/VcNyvY45/banner.png"
-            alt="Mafe Store - Tu tienda de perfumes favorita"
-            width={1200}
-            height={400}
-            className="w-full max-w-4xl mx-auto rounded-2xl shadow-sm object-contain"
+            src="https://i.ibb.co/bR6Y07PS/icon.png"
+            alt="FRAGANZZA"
+            width={180}
+            height={180}
+            className="w-32 h-32 sm:w-40 sm:h-40 object-contain"
             priority
           />
         </div>
