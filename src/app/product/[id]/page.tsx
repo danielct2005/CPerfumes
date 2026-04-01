@@ -24,7 +24,7 @@ export default function ProductDetail() {
     if (!url) return '/placeholder.png';
     // Si es de Cloudinary, agregar transformación
     if (url.includes('cloudinary.com')) {
-      return url.replace('/upload/', '/upload/w_600,c_fill/');
+      return url.replace('/upload/', '/upload/w_500,c_fill/');
     }
     return url;
   };
