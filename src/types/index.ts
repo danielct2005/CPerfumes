@@ -6,7 +6,9 @@ export interface Perfume {
   notes: string[];
   price: number;
   imageUrl: string;
+  images?: string[]; // Array de URLs para galería dinámica
   description?: string;
+  tags?: ('tendencias' | 'mas-vendidos')[]; // Etiquetas para filtros
   createdAt: number;
 }
 

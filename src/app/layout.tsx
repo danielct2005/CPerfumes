@@ -3,8 +3,20 @@ import './globals.css';
 import Providers from './providers';
 
 export const metadata: Metadata = {
-  title: 'CPerfumes - Catálogo de Perfumes',
-  description: 'Los mejores perfumes para ti',
+  title: {
+    default: 'CPerfumes | Catálogo de Perfumes Premium',
+    template: '%s | CPerfumes',
+  },
+  description: 'Colección exclusiva de fragancias premium. Los mejores perfumes para hombre, mujer y unisex en CPerfumes.',
+  keywords: ['perfumes', 'fragancias', 'perfumería', 'colonia', 'CPerfumes'],
+  authors: [{ name: 'CPerfumes' }],
+  openGraph: {
+    title: 'CPerfumes | Catálogo de Perfumes Premium',
+    description: 'Colección exclusiva de fragancias premium',
+    siteName: 'CPerfumes',
+    locale: 'es_CL',
+    type: 'website',
+  },
 };
 
 export const viewport: Viewport = {

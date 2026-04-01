@@ -15,6 +15,8 @@ import {
 } from 'firebase/firestore';
 import { Perfume } from '@/types';
 import Link from 'next/link';
+import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 
 export default function Dashboard() {
   const [user, setUser] = useState<any>(null);
@@ -32,6 +34,7 @@ export default function Dashboard() {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>('');
   const [uploading, setUploading] = useState(false);
+  const [tags, setTags] = useState<string[]>([]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -68,7 +71,6 @@ export default function Dashboard() {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Validate file size (max 16MB for ImgBB)
       if (file.size > 16 * 1024 * 1024) {
         alert('La imagen debe ser menor a 16MB');
         return;
@@ -82,7 +84,6 @@ export default function Dashboard() {
     const formData = new FormData();
     formData.append('image', file);
     
-    // Using ImgBB free API - get your own free key at https://api.imgbb.com/
     const apiKey = '0d9f404ba349bee6d17ebae53d1b56e3';
     
     const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
@@ -101,8 +102,6 @@ export default function Dashboard() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Image file:', imageFile);
-    console.log('Image preview:', imagePreview);
     if (!imageFile) {
       alert('Por favor selecciona una imagen del perfume');
       return;
@@ -112,10 +111,8 @@ export default function Dashboard() {
     setUploading(true);
     
     try {
-      // Upload image to ImgBB (free image hosting)
       const imageUrl = await uploadToImgBB(imageFile);
 
-      // Save to Firestore
       await addDoc(collection(db, 'perfumes'), {
         name,
         brand,
@@ -123,10 +120,10 @@ export default function Dashboard() {
         notes: notes.split(',').map((n) => n.trim()),
         price: parseFloat(price),
         imageUrl,
+        tags,
         createdAt: Date.now(),
       });
 
-      // Reset form
       setName('');
       setBrand('');
       setCategory('mujer');
@@ -134,8 +131,8 @@ export default function Dashboard() {
       setPrice('');
       setImageFile(null);
       setImagePreview('');
+      setTags([]);
 
-      // Refresh list
       await fetchProducts();
     } catch (error) {
       console.error('Error saving perfume:', error);
@@ -159,71 +156,88 @@ export default function Dashboard() {
     }
   };
 
+  const toggleTag = (tag: string) => {
+    setTags(prev => 
+      prev.includes(tag) 
+        ? prev.filter(t => t !== tag)
+        : [...prev, tag]
+    );
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+      <div className="min-h-screen bg-[#F8F9FA] flex items-center justify-center">
+        <div className="animate-pulse text-gray-300 text-sm tracking-wide">
+          Cargando...
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-          <Link href="/" className="text-xl font-bold text-purple-600">
-            CPerfumes Admin
-          </Link>
+    <div className="min-h-screen bg-[#F8F9FA] flex flex-col">
+      <Header />
+
+      <main className="flex-1 max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-12 w-full">
+        {/* Page Title */}
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-3xl font-light text-black tracking-tight">
+              Panel de Administración
+            </h1>
+            <p className="text-sm text-gray-400 mt-1">
+              Gestiona tu catálogo de perfumes
+            </p>
+          </div>
           <button
             onClick={handleLogout}
-            className="text-sm text-gray-600 hover:text-red-600"
+            className="text-sm text-gray-400 hover:text-black transition-colors"
           >
             Cerrar Sesión
           </button>
         </div>
-      </header>
 
-      <div className="max-w-7xl mx-auto px-4 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Add Product Form */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold mb-4">Añadir Nuevo Perfume</h2>
+          <div className="bg-white p-6">
+            <h2 className="text-lg font-medium text-black tracking-wide mb-6">
+              Añadir Nuevo Perfume
+            </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm text-gray-500 mb-1">
                   Nombre
                 </label>
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-4 py-2 border border-gray-200 bg-gray-50 text-black text-sm tracking-wide focus:outline-none focus:border-black transition-colors"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm text-gray-500 mb-1">
                   Marca
                 </label>
                 <input
                   type="text"
                   value={brand}
                   onChange={(e) => setBrand(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-4 py-2 border border-gray-200 bg-gray-50 text-black text-sm tracking-wide focus:outline-none focus:border-black transition-colors"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm text-gray-500 mb-1">
                   Categoría
                 </label>
                 <select
                   value={category}
                   onChange={(e) => setCategory(e.target.value as any)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-4 py-2 border border-gray-200 bg-gray-50 text-black text-sm tracking-wide focus:outline-none focus:border-black transition-colors"
                 >
                   <option value="mujer">Mujer</option>
                   <option value="hombre">Hombre</option>
@@ -232,7 +246,37 @@ export default function Dashboard() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm text-gray-500 mb-1">
+                  Etiquetas
+                </label>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => toggleTag('tendencias')}
+                    className={`px-3 py-1 text-xs tracking-wide transition-colors ${
+                      tags.includes('tendencias')
+                        ? 'bg-black text-white'
+                        : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                    }`}
+                  >
+                    Tendencias
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => toggleTag('mas-vendidos')}
+                    className={`px-3 py-1 text-xs tracking-wide transition-colors ${
+                      tags.includes('mas-vendidos')
+                        ? 'bg-black text-white'
+                        : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
+                    }`}
+                  >
+                    Más Vendidos
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm text-gray-500 mb-1">
                   Notas olfativas (separadas por coma)
                 </label>
                 <input
@@ -240,12 +284,12 @@ export default function Dashboard() {
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="floral, fresa, vainilla"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-4 py-2 border border-gray-200 bg-gray-50 text-black text-sm tracking-wide focus:outline-none focus:border-black transition-colors"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm text-gray-500 mb-1">
                   Precio
                 </label>
                 <input
@@ -253,13 +297,13 @@ export default function Dashboard() {
                   step="0.01"
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-4 py-2 border border-gray-200 bg-gray-50 text-black text-sm tracking-wide focus:outline-none focus:border-black transition-colors"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+                <label className="block text-sm text-gray-500 mb-1">
                   Foto del perfume
                 </label>
                 <input
@@ -267,10 +311,10 @@ export default function Dashboard() {
                   accept="image/*"
                   capture="environment"
                   onChange={handleImageChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-4 py-2 border border-gray-200 bg-gray-50 text-black text-sm tracking-wide focus:outline-none focus:border-black transition-colors"
                   required
                 />
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-gray-300 mt-1">
                   O usa la cámara del celular directamente
                 </p>
                 {imagePreview && (
@@ -278,7 +322,7 @@ export default function Dashboard() {
                     <img
                       src={imagePreview}
                       alt="Preview"
-                      className="w-full h-full object-cover rounded-lg"
+                      className="w-full h-full object-cover rounded-md"
                     />
                   </div>
                 )}
@@ -287,7 +331,7 @@ export default function Dashboard() {
               <button
                 type="submit"
                 disabled={saving}
-                className="w-full py-2 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50"
+                className="w-full py-3 bg-black text-white text-sm font-medium tracking-wide hover:bg-gray-800 transition-colors disabled:opacity-50"
               >
                 {uploading ? 'Subiendo imagen...' : saving ? 'Guardando...' : 'Guardar Perfume'}
               </button>
@@ -295,35 +339,47 @@ export default function Dashboard() {
           </div>
 
           {/* Products List */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold mb-4">
+          <div className="bg-white p-6">
+            <h2 className="text-lg font-medium text-black tracking-wide mb-6">
               Productos ({products.length})
             </h2>
             <div className="space-y-3 max-h-[600px] overflow-y-auto">
               {products.map((product) => (
                 <div
                   key={product.id}
-                  className="flex items-center gap-4 p-3 border border-gray-200 rounded-lg"
+                  className="flex items-center gap-4 p-3 border border-gray-100"
                 >
-                  <div className="w-16 h-16 relative flex-shrink-0">
+                  <div className="w-16 h-16 relative flex-shrink-0 bg-gray-50">
                     <img
                       src={product.imageUrl}
                       alt={product.name}
-                      className="w-full h-full object-cover rounded-lg"
+                      className="w-full h-full object-cover"
                     />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-medium text-gray-900 truncate">
+                    <h3 className="text-sm font-medium text-black truncate">
                       {product.name}
                     </h3>
-                    <p className="text-sm text-gray-500">{product.brand}</p>
-                    <p className="text-sm font-semibold text-purple-600">
+                    <p className="text-xs text-gray-400">{product.brand}</p>
+                    <p className="text-sm font-medium text-black mt-1">
                       ${product.price.toLocaleString('es-CL')}
                     </p>
+                    {product.tags && product.tags.length > 0 && (
+                      <div className="flex gap-1 mt-1">
+                        {product.tags.map((tag) => (
+                          <span
+                            key={tag}
+                            className="px-2 py-0.5 text-[10px] bg-black text-white"
+                          >
+                            {tag === 'tendencias' ? 'Tendencias' : 'Más Vendidos'}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </div>
                   <button
                     onClick={() => handleDelete(product.id)}
-                    className="p-2 text-red-500 hover:bg-red-50 rounded-lg"
+                    className="p-2 text-gray-300 hover:text-red-500 transition-colors"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -341,14 +397,16 @@ export default function Dashboard() {
                 </div>
               ))}
               {products.length === 0 && (
-                <p className="text-center text-gray-500 py-4">
+                <p className="text-center text-gray-300 py-8 text-sm">
                   No hay perfumes aún. Añade el primero!
                 </p>
               )}
             </div>
           </div>
         </div>
-      </div>
+      </main>
+
+      <Footer />
     </div>
   );
 }

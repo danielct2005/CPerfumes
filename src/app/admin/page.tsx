@@ -44,11 +44,14 @@ export default function AdminLogin() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-      <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8">
+    <div className="min-h-screen bg-[#F8F9FA] flex items-center justify-center px-4">
+      <div className="max-w-md w-full bg-white p-8">
         <div className="text-center mb-6">
-          <Link href="/" className="text-2xl">🌸</Link>
-          <h1 className="text-2xl font-bold text-gray-900 mt-2">Admin Login</h1>
+          <Link href="/" className="text-2xl">◆</Link>
+          <h1 className="text-2xl font-light text-black mt-2 tracking-tight">
+            CPerfumes
+          </h1>
+          <p className="text-sm text-gray-400 mt-1">Admin Login</p>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-4">
@@ -59,27 +62,27 @@ export default function AdminLogin() {
           )}
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm text-gray-500 mb-1">
               Email
             </label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-200 bg-gray-50 text-black text-sm tracking-wide focus:outline-none focus:border-black transition-colors"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm text-gray-500 mb-1">
               Contraseña
             </label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="w-full px-4 py-2 border border-gray-200 bg-gray-50 text-black text-sm tracking-wide focus:outline-none focus:border-black transition-colors"
               required
             />
           </div>
@@ -87,14 +90,14 @@ export default function AdminLogin() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-2 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50"
+            className="w-full py-3 bg-black text-white text-sm font-medium tracking-wide hover:bg-gray-800 transition-colors disabled:opacity-50"
           >
             {loading ? 'Iniciando...' : 'Iniciar Sesión'}
           </button>
         </form>
 
-        <div className="mt-4 text-center">
-          <Link href="/" className="text-sm text-purple-600 hover:underline">
+        <div className="mt-6 text-center">
+          <Link href="/" className="text-sm text-gray-400 hover:text-black transition-colors">
             ← Volver al catálogo
           </Link>
         </div>

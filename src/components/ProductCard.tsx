@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import Link from 'next/link';
 import { Perfume } from '@/types';
 import { useCart } from '@/context/cart-context';
 
@@ -11,16 +12,22 @@ interface ProductCardProps {
 export default function ProductCard({ perfume }: ProductCardProps) {
   const { addItem } = useCart();
 
-  const handleAddToCart = () => {
+  // Soporte para múltiples imágenes
+  const images = perfume.images?.length ? perfume.images : [perfume.imageUrl];
+  const mainImage = images[0];
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     addItem(perfume);
   };
 
   return (
-    <div className="group bg-white transition-all duration-300 hover:shadow-xl hover:shadow-black/5">
+    <Link href={`/product/${perfume.id}`} className="block group">
       {/* Product Image */}
       <div className="relative aspect-[4/5] bg-gray-50 overflow-hidden">
         <Image
-          src={perfume.imageUrl}
+          src={mainImage}
           alt={perfume.name}
           fill
           className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -61,6 +68,6 @@ export default function ProductCard({ perfume }: ProductCardProps) {
           ${perfume.price.toLocaleString('es-CL')}
         </p>
       </div>
-    </div>
+    </Link>
   );
 }
