@@ -17,7 +17,7 @@ export default function ProductCard({ perfume }: ProductCardProps) {
     // Si es de Cloudinary, agregar transformación
     if (url.includes('cloudinary.com')) {
       // Insertar transformación: w_600,c_fill para оптимиzar
-      return url.replace('/upload/', '/upload/w_600,c_fill/');
+      return url.replace('/upload/', '/upload/w_400,c_fill/');
     }
     return url;
   };
