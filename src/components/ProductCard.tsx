@@ -15,6 +15,12 @@ export default function ProductCard({ perfume }: ProductCardProps) {
   const images = perfume.images?.length ? perfume.images : [perfume.imageUrl];
   const hasMultipleImages = images.length > 1;
 
+  // Debug: mostrar URLs
+  console.log('ProductCard - perfume:', perfume.name);
+  console.log('  imageUrl:', perfume.imageUrl);
+  console.log('  images:', perfume.images);
+  console.log('  images finales:', images);
+
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();

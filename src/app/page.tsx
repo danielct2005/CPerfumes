@@ -28,18 +28,10 @@ export default function Home() {
         const perfumes = snapshot.docs.map((doc) => {
           const data = doc.data();
           
-          // Validar URLs de imagen - permitir cualquier URL de imgbb
-          const validateImageUrl = (url: string | undefined) => {
-            if (!url) return '';
-            // Si es URL de ImgBB de página (no imagen directa), intentar convertir
-            if (url.includes('imgbb.com') && !/\.(png|jpg|jpeg|gif|webp)$/i.test(url)) {
-              // Buscar si hay una URL de imagen en el response (contiene /image/)
-              // Si no, devolver la URL tal cual - el onError del Image la manejará
-              console.log('URL de ImgBB:', url);
-            }
-            return url;
-          };
-
+          console.log('Datos crudos del perfume:', data.name);
+          console.log('  imageUrl:', data.imageUrl);
+          console.log('  images:', data.images);
+          
           return {
             id: doc.id,
             name: data.name,
