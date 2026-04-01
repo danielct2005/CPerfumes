@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import Image from 'next/image';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import CartButton from '@/components/CartButton';
@@ -96,27 +95,12 @@ export default function Home() {
       <Header />
       
       <div className="flex-1 max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-12 w-full">
-        {/* Banner - Isotipo FRAGANZZA con fondo oscuro */}
+        {/* Banner - FRAGANZZA con fondo oscuro */}
         <div className="mb-8 flex justify-center">
           <div className="bg-zinc-950 rounded-xl p-6 flex items-center justify-center h-48 w-full max-w-md">
-            <div className="relative h-40 w-40">
-              <Image
-                src="https://i.ibb.co/bR6Y07PS/icon.png"
-                alt="FRAGANZZA"
-                fill
-                className="object-contain"
-                priority
-                unoptimized
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.style.display = 'none';
-                  const fallback = document.createElement('div');
-                  fallback.className = 'text-4xl font-light text-white absolute inset-0 flex items-center justify-center';
-                  fallback.textContent = 'FRAGANZZA';
-                  target.parentElement?.appendChild(fallback);
-                }}
-              />
-            </div>
+            <span className="text-4xl font-light text-white tracking-wider">
+              FRAGANZZA
+            </span>
           </div>
         </div>
 

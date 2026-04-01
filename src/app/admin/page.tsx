@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 import { auth } from '@/lib/firebase';
 import { signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
 import Link from 'next/link';
@@ -49,24 +48,9 @@ export default function AdminLogin() {
       <div className="max-w-md w-full bg-white p-8">
         <div className="text-center mb-6">
           <Link href="/" className="inline-block">
-            <div className="relative h-12 w-32">
-              <Image
-                src="https://i.ibb.co/sp4k4NKk/logo-text.png"
-                alt="FRAGANZZA"
-                fill
-                className="object-contain"
-                priority
-                unoptimized
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.style.display = 'none';
-                  const fallback = document.createElement('span');
-                  fallback.className = 'text-xl font-medium text-black absolute inset-0 flex items-center justify-center';
-                  fallback.textContent = 'FRAGANZZA';
-                  target.parentElement?.appendChild(fallback);
-                }}
-              />
-            </div>
+            <span className="text-2xl font-bold tracking-tight text-black">
+              FRAGANZZA
+            </span>
           </Link>
           <p className="text-sm text-gray-400 mt-3">Admin Login</p>
         </div>
