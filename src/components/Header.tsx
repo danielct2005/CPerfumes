@@ -10,15 +10,24 @@ export default function Header() {
         <div className="flex items-center justify-between h-14">
           {/* Logo - FRAGANZZA texto horizontal */}
           <Link href="/" className="flex items-center">
-            <Image
-              src="https://i.ibb.co/sp4k4NKk/logo-text.png"
-              alt="FRAGANZZA"
-              width={120}
-              height={40}
-              className="h-12 w-auto object-contain"
-              priority
-              unoptimized
-            />
+            <div className="relative h-12 w-auto min-w-[100px]">
+              <Image
+                src="https://i.ibb.co/sp4k4NKk/logo-text.png"
+                alt="FRAGANZZA"
+                fill
+                className="object-contain"
+                unoptimized
+                onError={(e) => {
+                  // Fallback: mostrar texto si imagen no carga
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = 'none';
+                  const fallback = document.createElement('span');
+                  fallback.className = 'text-lg font-medium text-black absolute inset-0 flex items-center';
+                  fallback.textContent = 'FRAGANZZA';
+                  target.parentElement?.appendChild(fallback);
+                }}
+              />
+            </div>
           </Link>
 
           {/* Admin Link */}

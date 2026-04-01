@@ -11,14 +11,23 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <Link href="/" className="flex items-center">
-              <Image
-                src="https://i.ibb.co/sp4k4NKk/logo-text.png"
-                alt="FRAGANZZA"
-                width={100}
-                height={32}
-                className="h-8 w-auto object-contain"
-                unoptimized
-              />
+              <div className="relative h-8 w-24">
+                <Image
+                  src="https://i.ibb.co/sp4k4NKk/logo-text.png"
+                  alt="FRAGANZZA"
+                  fill
+                  className="object-contain"
+                  unoptimized
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.style.display = 'none';
+                    const fallback = document.createElement('span');
+                    fallback.className = 'text-sm font-medium text-black absolute inset-0 flex items-center';
+                    fallback.textContent = 'FRAGANZZA';
+                    target.parentElement?.appendChild(fallback);
+                  }}
+                />
+              </div>
             </Link>
             <p className="text-sm text-gray-400 mt-4">
               Catálogo de perfumes premium

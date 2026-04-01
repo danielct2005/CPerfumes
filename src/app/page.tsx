@@ -99,15 +99,24 @@ export default function Home() {
         {/* Banner - Isotipo FRAGANZZA con fondo oscuro */}
         <div className="mb-8 flex justify-center">
           <div className="bg-zinc-950 rounded-xl p-6 flex items-center justify-center h-48 w-full max-w-md">
-            <Image
-              src="https://i.ibb.co/bR6Y07PS/icon.png"
-              alt="FRAGANZZA"
-              width={180}
-              height={180}
-              className="h-40 w-auto object-contain"
-              priority
-              unoptimized
-            />
+            <div className="relative h-40 w-40">
+              <Image
+                src="https://i.ibb.co/bR6Y07PS/icon.png"
+                alt="FRAGANZZA"
+                fill
+                className="object-contain"
+                priority
+                unoptimized
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.style.display = 'none';
+                  const fallback = document.createElement('div');
+                  fallback.className = 'text-4xl font-light text-white absolute inset-0 flex items-center justify-center';
+                  fallback.textContent = 'FRAGANZZA';
+                  target.parentElement?.appendChild(fallback);
+                }}
+              />
+            </div>
           </div>
         </div>
 

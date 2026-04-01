@@ -6,6 +6,14 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'i.ibb.co',
       },
+      {
+        protocol: 'https',
+        hostname: '*.imgbb.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'ibb.co',
+      },
     ],
   },
 };
