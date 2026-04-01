@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { db } from '@/lib/firebase';
@@ -107,14 +106,10 @@ export default function ProductDetail() {
                   transition={{ duration: 0.3 }}
                   className="absolute inset-0"
                 >
-                  <Image
+                  <img
                     src={images[currentIndex]}
                     alt={`${product.name} - Imagen ${currentIndex + 1}`}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    priority
-                    unoptimized
+                    className="w-full h-full object-cover"
                   />
                 </motion.div>
               </AnimatePresence>
@@ -157,13 +152,10 @@ export default function ProductDetail() {
                         : 'opacity-50 hover:opacity-100'
                     }`}
                   >
-                    <Image
+                    <img
                       src={img}
                       alt={`Thumbnail ${idx + 1}`}
-                      fill
-                      className="object-cover"
-                      sizes="64px"
-                      unoptimized
+                      className="w-full h-full object-cover"
                     />
                   </button>
                 ))}

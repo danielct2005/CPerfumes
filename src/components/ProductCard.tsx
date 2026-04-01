@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { Perfume } from '@/types';
 import { useCart } from '@/context/cart-context';
@@ -24,7 +23,7 @@ export default function ProductCard({ perfume }: ProductCardProps) {
 
   return (
     <Link href={`/product/${perfume.id}`} className="block group">
-      {/* Product Image - Carrusel con scroll snap */}
+      {/* Product Image - Carrusel con scroll snap usando img nativo */}
       <div className="relative aspect-[4/5] bg-gray-50 overflow-hidden">
         {hasMultipleImages ? (
           // Carrusel deslizable para múltiples imágenes
@@ -34,26 +33,20 @@ export default function ProductCard({ perfume }: ProductCardProps) {
                 key={idx} 
                 className="flex-shrink-0 w-full h-full snap-center relative"
               >
-                <Image
+                <img
                   src={img}
                   alt={`${perfume.name} - Imagen ${idx + 1}`}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 25vw, 25vw"
-                  unoptimized
+                  className="w-full h-full object-cover"
                 />
               </div>
             ))}
           </div>
         ) : (
-          // Imagen única
-          <Image
+          // Imagen única usando img nativo
+          <img
             src={images[0]}
             alt={perfume.name}
-            fill
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 25vw, 25vw"
-            unoptimized
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
         )}
         
