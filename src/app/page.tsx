@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+import Image from 'next/image';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import CartButton from '@/components/CartButton';
@@ -69,14 +70,16 @@ export default function Home() {
       <Header />
       
       <div className="flex-1 max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-12 w-full">
-        {/* Hero Section */}
-        <div className="text-center mb-16">
-          <h1 className="text-4xl sm:text-5xl font-light text-black tracking-tight">
-            CPerfumes
-          </h1>
-          <p className="text-gray-400 mt-4 text-sm tracking-wide max-w-md mx-auto">
-            Colección exclusiva de fragancias premium
-          </p>
+        {/* Banner Horizontal */}
+        <div className="mb-12">
+          <Image
+            src="https://i.ibb.co/VcNyvY45/banner.png"
+            alt="Mafe Store - Tu tienda de perfumes favorita"
+            width={1200}
+            height={400}
+            className="w-full max-w-4xl mx-auto rounded-2xl shadow-sm object-contain"
+            priority
+          />
         </div>
 
         {/* Filters */}

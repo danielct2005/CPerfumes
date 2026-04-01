@@ -4,16 +4,16 @@ import Providers from './providers';
 
 export const metadata: Metadata = {
   title: {
-    default: 'CPerfumes | Catálogo de Perfumes Premium',
-    template: '%s | CPerfumes',
+    default: 'Mafe Store | Tu Tienda de Perfumes',
+    template: '%s | Mafe Store',
   },
-  description: 'Colección exclusiva de fragancias premium. Los mejores perfumes para hombre, mujer y unisex en CPerfumes.',
-  keywords: ['perfumes', 'fragancias', 'perfumería', 'colonia', 'CPerfumes'],
-  authors: [{ name: 'CPerfumes' }],
+  description: 'Los mejores perfumes para ti. Perfumes para hombre, mujer y unisex en Mafe Store.',
+  keywords: ['perfumes', 'fragancias', 'perfumería', 'colonia', 'Mafe Store'],
+  authors: [{ name: 'Mafe Store' }],
   openGraph: {
-    title: 'CPerfumes | Catálogo de Perfumes Premium',
-    description: 'Colección exclusiva de fragancias premium',
-    siteName: 'CPerfumes',
+    title: 'Mafe Store | Tu Tienda de Perfumes',
+    description: 'Los mejores perfumes para ti',
+    siteName: 'Mafe Store',
     locale: 'es_CL',
     type: 'website',
   },

@@ -37,7 +37,7 @@ export default function ProductCard({ perfume }: ProductCardProps) {
         {/* Add button overlay on hover */}
         <button
           onClick={handleAddToCart}
-          className="absolute bottom-4 left-4 right-4 py-3 bg-black text-white text-sm font-medium tracking-wide opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0"
+          className="absolute bottom-4 left-4 right-4 py-3 bg-[#D63384] text-white text-sm font-medium tracking-wide opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0"
         >
           Añadir al carrito
         </button>

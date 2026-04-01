@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { auth } from '@/lib/firebase';
-import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'firebase/auth';
+import { signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth';
 import Link from 'next/link';
 
 export default function AdminLogin() {
@@ -47,11 +48,17 @@ export default function AdminLogin() {
     <div className="min-h-screen bg-[#F8F9FA] flex items-center justify-center px-4">
       <div className="max-w-md w-full bg-white p-8">
         <div className="text-center mb-6">
-          <Link href="/" className="text-2xl">◆</Link>
-          <h1 className="text-2xl font-light text-black mt-2 tracking-tight">
-            CPerfumes
-          </h1>
-          <p className="text-sm text-gray-400 mt-1">Admin Login</p>
+          <Link href="/" className="inline-block">
+            <Image
+              src="https://i.ibb.co/sp4k4NKk/logo-text.png"
+              alt="Mafe Store"
+              width={140}
+              height={45}
+              className="h-auto w-auto"
+              priority
+            />
+          </Link>
+          <p className="text-sm text-gray-400 mt-3">Admin Login</p>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-4">
@@ -69,7 +76,7 @@ export default function AdminLogin() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-200 bg-gray-50 text-black text-sm tracking-wide focus:outline-none focus:border-black transition-colors"
+              className="w-full px-4 py-2 border border-gray-200 bg-gray-50 text-black text-sm tracking-wide focus:outline-none focus:border-[#D63384] transition-colors"
               required
             />
           </div>
@@ -82,7 +89,7 @@ export default function AdminLogin() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-200 bg-gray-50 text-black text-sm tracking-wide focus:outline-none focus:border-black transition-colors"
+              className="w-full px-4 py-2 border border-gray-200 bg-gray-50 text-black text-sm tracking-wide focus:outline-none focus:border-[#D63384] transition-colors"
               required
             />
           </div>
@@ -90,7 +97,7 @@ export default function AdminLogin() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-black text-white text-sm font-medium tracking-wide hover:bg-gray-800 transition-colors disabled:opacity-50"
+            className="w-full py-3 bg-[#D63384] text-white text-sm font-medium tracking-wide hover:bg-[#C02373] transition-colors disabled:opacity-50"
           >
             {loading ? 'Iniciando...' : 'Iniciar Sesión'}
           </button>

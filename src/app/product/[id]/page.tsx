@@ -179,7 +179,7 @@ export default function ProductDetail() {
               {product.tags?.map((tag) => (
                 <span
                   key={tag}
-                  className="px-2 py-1 text-xs bg-black text-white uppercase tracking-wider"
+                  className="px-2 py-1 text-xs bg-[#D63384] text-white uppercase tracking-wider"
                 >
                   {tag === 'tendencias' ? 'Tendencias' : 'Más Vendidos'}
                 </span>
@@ -231,7 +231,7 @@ export default function ProductDetail() {
             {/* Add to Cart */}
             <button
               onClick={handleAddToCart}
-              className="mt-auto py-4 bg-black text-white text-sm font-medium tracking-wide hover:bg-gray-800 transition-colors"
+              className="mt-auto py-4 bg-[#D63384] text-white text-sm font-medium tracking-wide hover:bg-[#C02373] transition-colors"
             >
               Añadir al carrito
             </button>

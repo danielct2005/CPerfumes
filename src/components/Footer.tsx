@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Footer() {
   return (
@@ -9,14 +10,17 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* Brand */}
           <div>
-            <Link href="/" className="flex items-center gap-2">
-              <span className="text-2xl">◆</span>
-              <span className="text-lg font-medium tracking-wide text-black">
-                CPerfumes
-              </span>
+            <Link href="/" className="flex items-center">
+              <Image
+                src="https://i.ibb.co/sp4k4NKk/logo-text.png"
+                alt="Mafe Store"
+                width={120}
+                height={38}
+                className="h-auto w-auto"
+              />
             </Link>
             <p className="text-sm text-gray-400 mt-4">
-              Colección exclusiva de fragancias premium
+              Tu tienda de perfumes favorita
             </p>
           </div>
 
@@ -57,7 +61,7 @@ export default function Footer() {
 
         <div className="border-t border-gray-100 mt-8 pt-8 text-center">
           <p className="text-xs text-gray-300 tracking-wide">
-            © {new Date().getFullYear()} CPerfumes. Todos los derechos reservados.
+            © {new Date().getFullYear()} Mafe Store. Todos los derechos reservados.
           </p>
         </div>
       </div>
