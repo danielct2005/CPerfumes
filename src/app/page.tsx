@@ -26,10 +26,36 @@ export default function Home() {
       try {
         const q = query(collection(db, 'perfumes'), orderBy('createdAt', 'desc'));
         const snapshot = await getDocs(q);
-        const perfumes = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        })) as Perfume[];
+        const perfumes = snapshot.docs.map((doc) => {
+          const data = doc.data();
+          
+          // Validar que las URLs de imagen sean enlaces directos (.png, .jpg, etc.)
+          const validateImageUrl = (url: string | undefined) => {
+            if (!url) return '';
+            // Si es la URL de la página de ImgBB (no es enlace directo), devolver vacío
+            if (url.includes('imgbb.com') && !/\.(png|jpg|jpeg|gif|webp)$/i.test(url)) {
+              console.warn('URL inválida (no es enlace directo):', url);
+              return '';
+            }
+            return url;
+          };
+
+          return {
+            id: doc.id,
+            name: data.name,
+            brand: data.brand,
+            category: data.category,
+            notes: data.notes || [],
+            price: data.price || 0,
+            imageUrl: validateImageUrl(data.imageUrl),
+            images: (data.images || []).map(validateImageUrl).filter(Boolean),
+            tags: data.tags || [],
+            description: data.description,
+            createdAt: data.createdAt,
+          };
+        }) as Perfume[];
+        
+        console.log('Perfumes cargados:', perfumes.length);
         setProducts(perfumes);
       } catch (error) {
         console.error('Error fetching products:', error);
@@ -80,6 +106,7 @@ export default function Home() {
               height={180}
               className="h-40 w-auto object-contain"
               priority
+              unoptimized
             />
           </div>
         </div>

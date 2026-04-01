@@ -56,6 +56,7 @@ export default function AdminLogin() {
               height={45}
               className="h-auto w-auto"
               priority
+              unoptimized
             />
           </Link>
           <p className="text-sm text-gray-400 mt-3">Admin Login</p>

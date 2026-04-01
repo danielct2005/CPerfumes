@@ -14,9 +14,10 @@ export default function Footer() {
               <Image
                 src="https://i.ibb.co/sp4k4NKk/logo-text.png"
                 alt="FRAGANZZA"
-                width={120}
-                height={38}
-                className="h-auto w-auto"
+                width={100}
+                height={32}
+                className="h-8 w-auto object-contain"
+                unoptimized
               />
             </Link>
             <p className="text-sm text-gray-400 mt-4">
@@ -61,7 +62,7 @@ export default function Footer() {
 
         <div className="border-t border-gray-100 mt-8 pt-8 text-center">
           <p className="text-xs text-gray-300 tracking-wide">
-            © {new Date().getFullYear()} Mafe Store. Todos los derechos reservados.
+            © {new Date().getFullYear()} FRAGANZZA. Todos los derechos reservados.
           </p>
         </div>
       </div>

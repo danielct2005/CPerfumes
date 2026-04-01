@@ -40,6 +40,7 @@ export default function ProductCard({ perfume }: ProductCardProps) {
                   fill
                   className="object-cover"
                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 25vw, 25vw"
+                  unoptimized
                 />
               </div>
             ))}
@@ -52,6 +53,7 @@ export default function ProductCard({ perfume }: ProductCardProps) {
             fill
             className="object-cover transition-transform duration-500 group-hover:scale-105"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 25vw, 25vw"
+            unoptimized
           />
         )}
         

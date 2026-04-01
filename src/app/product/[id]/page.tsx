@@ -114,6 +114,7 @@ export default function ProductDetail() {
                     className="object-cover"
                     sizes="(max-width: 768px) 100vw, 50vw"
                     priority
+                    unoptimized
                   />
                 </motion.div>
               </AnimatePresence>
@@ -162,6 +163,7 @@ export default function ProductDetail() {
                       fill
                       className="object-cover"
                       sizes="64px"
+                      unoptimized
                     />
                   </button>
                 ))}
