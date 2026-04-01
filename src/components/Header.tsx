@@ -10,9 +10,9 @@ export default function Header() {
         <div className="flex items-center justify-between h-14">
           {/* Logo */}
           <Link href="/" className="flex items-center">
-            <Image
+              <Image
               src="https://i.ibb.co/sp4k4NKk/logo-text.png"
-              alt="Mafe Store"
+              alt="FRAGANZZA"
               width={140}
               height={45}
               className="h-auto w-auto"

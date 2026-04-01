@@ -4,16 +4,16 @@ import Providers from './providers';
 
 export const metadata: Metadata = {
   title: {
-    default: 'Mafe Store | Tu Tienda de Perfumes',
-    template: '%s | Mafe Store',
+    default: 'FRAGANZZA | Catálogo de Perfumes',
+    template: '%s | FRAGANZZA',
   },
-  description: 'Los mejores perfumes para ti. Perfumes para hombre, mujer y unisex en Mafe Store.',
-  keywords: ['perfumes', 'fragancias', 'perfumería', 'colonia', 'Mafe Store'],
-  authors: [{ name: 'Mafe Store' }],
+  description: 'Los mejores perfumes para ti. Catálogo de perfumes para hombre, mujer y unisex.',
+  keywords: ['perfumes', 'fragancias', 'perfumería', 'colonia', 'FRAGANZZA'],
+  authors: [{ name: 'FRAGANZZA' }],
   openGraph: {
-    title: 'Mafe Store | Tu Tienda de Perfumes',
+    title: 'FRAGANZZA | Catálogo de Perfumes',
     description: 'Los mejores perfumes para ti',
-    siteName: 'Mafe Store',
+    siteName: 'FRAGANZZA',
     locale: 'es_CL',
     type: 'website',
   },

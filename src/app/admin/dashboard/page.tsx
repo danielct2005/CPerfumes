@@ -255,7 +255,7 @@ export default function Dashboard() {
                     onClick={() => toggleTag('tendencias')}
                     className={`px-3 py-1 text-xs tracking-wide transition-colors ${
                       tags.includes('tendencias')
-                        ? 'bg-[#D63384] text-white'
+                        ? 'bg-black text-white'
                         : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
                     }`}
                   >
@@ -266,7 +266,7 @@ export default function Dashboard() {
                     onClick={() => toggleTag('mas-vendidos')}
                     className={`px-3 py-1 text-xs tracking-wide transition-colors ${
                       tags.includes('mas-vendidos')
-                        ? 'bg-[#D63384] text-white'
+                        ? 'bg-black text-white'
                         : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
                     }`}
                   >
@@ -331,7 +331,7 @@ export default function Dashboard() {
               <button
                 type="submit"
                 disabled={saving}
-                className="w-full py-3 bg-[#D63384] text-white text-sm font-medium tracking-wide hover:bg-[#C02373] transition-colors disabled:opacity-50"
+                className="w-full py-3 bg-black text-white text-sm font-medium tracking-wide hover:bg-gray-800 transition-colors disabled:opacity-50"
               >
                 {uploading ? 'Subiendo imagen...' : saving ? 'Guardando...' : 'Guardar Perfume'}
               </button>
@@ -369,7 +369,7 @@ export default function Dashboard() {
                         {product.tags.map((tag) => (
                           <span
                             key={tag}
-                            className="px-2 py-0.5 text-[10px] bg-[#D63384] text-white"
+                            className="px-2 py-0.5 text-[10px] bg-black text-white"
                           >
                             {tag === 'tendencias' ? 'Tendencias' : 'Más Vendidos'}
                           </span>

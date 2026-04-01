@@ -13,14 +13,14 @@ export default function Footer() {
             <Link href="/" className="flex items-center">
               <Image
                 src="https://i.ibb.co/sp4k4NKk/logo-text.png"
-                alt="Mafe Store"
+                alt="FRAGANZZA"
                 width={120}
                 height={38}
                 className="h-auto w-auto"
               />
             </Link>
             <p className="text-sm text-gray-400 mt-4">
-              Tu tienda de perfumes favorita
+              Catálogo de perfumes premium
             </p>
           </div>
 

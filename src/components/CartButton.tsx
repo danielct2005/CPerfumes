@@ -59,7 +59,7 @@ export default function CartButton() {
               </div>
               <button
                 onClick={handleCheckout}
-                className="w-full py-3 bg-[#D63384] text-white text-sm font-medium tracking-wide hover:bg-[#C02373] transition-colors duration-200 flex items-center justify-center gap-2"
+                className="w-full py-3 bg-black text-white text-sm font-medium tracking-wide hover:bg-gray-800 transition-colors duration-200 flex items-center justify-center gap-2"
               >
                 <span>Continuar por WhatsApp</span>
               </button>
@@ -71,7 +71,7 @@ export default function CartButton() {
       {/* Floating Cart Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative w-12 h-12 bg-[#D63384] border border-[#D63384] text-white rounded-full shadow-lg hover:shadow-xl hover:bg-[#C02373] transition-all duration-200 flex items-center justify-center"
+        className="relative w-12 h-12 bg-white border border-gray-200 text-black rounded-full shadow-lg hover:shadow-xl hover:border-gray-300 transition-all duration-200 flex items-center justify-center"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -90,7 +90,7 @@ export default function CartButton() {
         
         {/* Badge */}
         {itemCount > 0 && (
-          <span className="absolute -top-1 -right-1 w-5 h-5 bg-white text-[#D63384] text-xs font-medium rounded-full flex items-center justify-center">
+          <span className="absolute -top-1 -right-1 w-5 h-5 bg-black text-white text-xs font-medium rounded-full flex items-center justify-center">
             {itemCount > 9 ? '9+' : itemCount}
           </span>
         )}

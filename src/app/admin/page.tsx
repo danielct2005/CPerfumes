@@ -51,7 +51,7 @@ export default function AdminLogin() {
           <Link href="/" className="inline-block">
             <Image
               src="https://i.ibb.co/sp4k4NKk/logo-text.png"
-              alt="Mafe Store"
+              alt="FRAGANZZA"
               width={140}
               height={45}
               className="h-auto w-auto"
