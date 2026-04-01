@@ -11,13 +11,7 @@ interface ProductCardProps {
 export default function ProductCard({ perfume }: ProductCardProps) {
   const { addItem } = useCart();
 
-  // Función para obtener URL del proxy
-  const getProxyUrl = (url: string) => {
-    if (!url) return '/placeholder.png';
-    return `/api/image/proxy?url=${encodeURIComponent(url)}`;
-  };
-
-  // Soporte para múltiples imágenes
+  // Soporte para múltiples imágenes - URLs directas de Cloudinary
   const images = perfume.images?.length ? perfume.images : [perfume.imageUrl];
   const hasMultipleImages = images.length > 1;
 
@@ -40,7 +34,7 @@ export default function ProductCard({ perfume }: ProductCardProps) {
                 className="flex-shrink-0 w-full h-full snap-center relative"
               >
                 <img
-                  src={getProxyUrl(img)}
+                  src={img}
                   alt={`${perfume.name} - Imagen ${idx + 1}`}
                   className="w-full h-full object-cover"
                 />
@@ -50,7 +44,7 @@ export default function ProductCard({ perfume }: ProductCardProps) {
         ) : (
           // Imagen única usando img nativo
           <img
-            src={getProxyUrl(images[0])}
+            src={images[0]}
             alt={perfume.name}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />

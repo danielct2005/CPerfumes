@@ -110,24 +110,24 @@ export default function Dashboard() {
     setImagePreviews(previews);
   };
 
-  const uploadToImgBB = async (file: File): Promise<string> => {
+  const uploadToCloudinary = async (file: File): Promise<string> => {
     const formData = new FormData();
-    formData.append('image', file);
+    formData.append('file', file);
+    formData.append('upload_preset', 'perfumes');
+    formData.append('cloud_name', 'dfkowfc33');
     
-    const apiKey = '0d9f404ba349bee6d17ebae53d1b56e3';
-    
-    const response = await fetch(`https://api.imgbb.com/1/upload?key=${apiKey}`, {
+    const response = await fetch('https://api.cloudinary.com/v1_1/dfkowfc33/image/upload', {
       method: 'POST',
       body: formData,
     });
     
     const data = await response.json();
     
-    if (!data.success) {
+    if (!data.secure_url) {
       throw new Error('Error al subir imagen');
     }
     
-    return data.data.url;
+    return data.secure_url;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -147,7 +147,7 @@ export default function Dashboard() {
       // Subir nuevas imágenes si hay
       if (imageFiles.length > 0) {
         const uploadedUrls = await Promise.all(
-          imageFiles.map(file => uploadToImgBB(file))
+          imageFiles.map(file => uploadToCloudinary(file))
         );
         finalImages = [...finalImages, ...uploadedUrls];
       }

@@ -19,10 +19,9 @@ export default function ProductDetail() {
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Función para obtener URL del proxy
+  // Función para obtener URL - directa de Cloudinary
   const getProxyUrl = (url: string) => {
-    if (!url) return '/placeholder.png';
-    return `/api/image/proxy?url=${encodeURIComponent(url)}`;
+    return url || '/placeholder.png';
   };
 
   useEffect(() => {
