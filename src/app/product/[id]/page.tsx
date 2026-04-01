@@ -19,9 +19,14 @@ export default function ProductDetail() {
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Función para obtener URL - directa de Cloudinary
-  const getProxyUrl = (url: string) => {
-    return url || '/placeholder.png';
+  // Función para obtener URL optimizada de Cloudinary
+  const getOptimizedUrl = (url: string) => {
+    if (!url) return '/placeholder.png';
+    // Si es de Cloudinary, agregar transformación
+    if (url.includes('cloudinary.com')) {
+      return url.replace('/upload/', '/upload/w_800,c_fill/');
+    }
+    return url;
   };
 
   useEffect(() => {
@@ -112,7 +117,7 @@ export default function ProductDetail() {
                   className="absolute inset-0"
                 >
                   <img
-                    src={getProxyUrl(images[currentIndex])}
+                    src={getOptimizedUrl(images[currentIndex])}
                     alt={`${product.name} - Imagen ${currentIndex + 1}`}
                     className="w-full h-full object-cover"
                   />
@@ -158,7 +163,7 @@ export default function ProductDetail() {
                     }`}
                   >
                     <img
-                      src={getProxyUrl(img)}
+                      src={getOptimizedUrl(img)}
                       alt={`Thumbnail ${idx + 1}`}
                       className="w-full h-full object-cover"
                     />

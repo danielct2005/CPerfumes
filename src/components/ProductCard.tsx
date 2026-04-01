@@ -11,6 +11,17 @@ interface ProductCardProps {
 export default function ProductCard({ perfume }: ProductCardProps) {
   const { addItem } = useCart();
 
+  // Función para obtener URL optimizada de Cloudinary
+  const getOptimizedUrl = (url: string) => {
+    if (!url) return '/placeholder.png';
+    // Si es de Cloudinary, agregar transformación
+    if (url.includes('cloudinary.com')) {
+      // Insertar transformación: w_600,c_fill para оптимиzar
+      return url.replace('/upload/', '/upload/w_600,c_fill/');
+    }
+    return url;
+  };
+
   // Soporte para múltiples imágenes - URLs directas de Cloudinary
   const images = perfume.images?.length ? perfume.images : [perfume.imageUrl];
   const hasMultipleImages = images.length > 1;
@@ -34,7 +45,7 @@ export default function ProductCard({ perfume }: ProductCardProps) {
                 className="flex-shrink-0 w-full h-full snap-center relative"
               >
                 <img
-                  src={img}
+                  src={getOptimizedUrl(img)}
                   alt={`${perfume.name} - Imagen ${idx + 1}`}
                   className="w-full h-full object-cover"
                 />
@@ -44,7 +55,7 @@ export default function ProductCard({ perfume }: ProductCardProps) {
         ) : (
           // Imagen única usando img nativo
           <img
-            src={images[0]}
+            src={getOptimizedUrl(images[0])}
             alt={perfume.name}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
