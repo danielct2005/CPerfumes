@@ -19,6 +19,12 @@ export default function ProductDetail() {
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  // Función para obtener URL del proxy
+  const getProxyUrl = (url: string) => {
+    if (!url) return '/placeholder.png';
+    return `/api/image/proxy?url=${encodeURIComponent(url)}`;
+  };
+
   useEffect(() => {
     const fetchProduct = async () => {
       if (!params.id) return;
@@ -107,7 +113,7 @@ export default function ProductDetail() {
                   className="absolute inset-0"
                 >
                   <img
-                    src={images[currentIndex]}
+                    src={getProxyUrl(images[currentIndex])}
                     alt={`${product.name} - Imagen ${currentIndex + 1}`}
                     className="w-full h-full object-cover"
                   />
@@ -153,7 +159,7 @@ export default function ProductDetail() {
                     }`}
                   >
                     <img
-                      src={img}
+                      src={getProxyUrl(img)}
                       alt={`Thumbnail ${idx + 1}`}
                       className="w-full h-full object-cover"
                     />

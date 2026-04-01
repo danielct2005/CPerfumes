@@ -11,15 +11,15 @@ interface ProductCardProps {
 export default function ProductCard({ perfume }: ProductCardProps) {
   const { addItem } = useCart();
 
+  // Función para obtener URL del proxy
+  const getProxyUrl = (url: string) => {
+    if (!url) return '/placeholder.png';
+    return `/api/image/proxy?url=${encodeURIComponent(url)}`;
+  };
+
   // Soporte para múltiples imágenes
   const images = perfume.images?.length ? perfume.images : [perfume.imageUrl];
   const hasMultipleImages = images.length > 1;
-
-  // Debug: mostrar URLs
-  console.log('ProductCard - perfume:', perfume.name);
-  console.log('  imageUrl:', perfume.imageUrl);
-  console.log('  images:', perfume.images);
-  console.log('  images finales:', images);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -40,7 +40,7 @@ export default function ProductCard({ perfume }: ProductCardProps) {
                 className="flex-shrink-0 w-full h-full snap-center relative"
               >
                 <img
-                  src={img}
+                  src={getProxyUrl(img)}
                   alt={`${perfume.name} - Imagen ${idx + 1}`}
                   className="w-full h-full object-cover"
                 />
@@ -50,7 +50,7 @@ export default function ProductCard({ perfume }: ProductCardProps) {
         ) : (
           // Imagen única usando img nativo
           <img
-            src={images[0]}
+            src={getProxyUrl(images[0])}
             alt={perfume.name}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           />

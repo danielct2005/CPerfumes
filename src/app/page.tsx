@@ -27,11 +27,6 @@ export default function Home() {
         const snapshot = await getDocs(q);
         const perfumes = snapshot.docs.map((doc) => {
           const data = doc.data();
-          
-          console.log('Datos crudos del perfume:', data.name);
-          console.log('  imageUrl:', data.imageUrl);
-          console.log('  images:', data.images);
-          
           return {
             id: doc.id,
             name: data.name,
