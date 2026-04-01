@@ -70,16 +70,18 @@ export default function Home() {
       <Header />
       
       <div className="flex-1 max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-12 w-full">
-        {/* Banner - Isotipo FRAGANZZA */}
-        <div className="mb-12 flex justify-center">
-          <Image
-            src="https://i.ibb.co/bR6Y07PS/icon.png"
-            alt="FRAGANZZA"
-            width={180}
-            height={180}
-            className="w-32 h-32 sm:w-40 sm:h-40 object-contain"
-            priority
-          />
+        {/* Banner - Isotipo FRAGANZZA con fondo oscuro */}
+        <div className="mb-8 flex justify-center">
+          <div className="bg-zinc-950 rounded-xl p-6 flex items-center justify-center h-48 w-full max-w-md">
+            <Image
+              src="https://i.ibb.co/bR6Y07PS/icon.png"
+              alt="FRAGANZZA"
+              width={180}
+              height={180}
+              className="h-40 w-auto object-contain"
+              priority
+            />
+          </div>
         </div>
 
         {/* Filters */}

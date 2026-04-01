@@ -13,9 +13,9 @@ export default function Header() {
             <Image
               src="https://i.ibb.co/sp4k4NKk/logo-text.png"
               alt="FRAGANZZA"
-              width={160}
-              height={45}
-              className="h-10 w-auto object-contain"
+              width={120}
+              height={40}
+              className="h-12 w-auto object-contain"
               priority
             />
           </Link>
