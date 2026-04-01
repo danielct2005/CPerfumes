@@ -70,7 +70,7 @@ export default function AdminLogin() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-200 bg-gray-50 text-black text-sm tracking-wide focus:outline-none focus:border-[#D63384] transition-colors"
+              className="w-full px-4 py-2 border border-gray-200 bg-gray-50 text-black text-sm tracking-wide focus:outline-none focus:border-black transition-colors"
               required
             />
           </div>
@@ -83,7 +83,7 @@ export default function AdminLogin() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-200 bg-gray-50 text-black text-sm tracking-wide focus:outline-none focus:border-[#D63384] transition-colors"
+              className="w-full px-4 py-2 border border-gray-200 bg-gray-50 text-black text-sm tracking-wide focus:outline-none focus:border-black transition-colors"
               required
             />
           </div>
@@ -91,7 +91,7 @@ export default function AdminLogin() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 bg-[#D63384] text-white text-sm font-medium tracking-wide hover:bg-[#C02373] transition-colors disabled:opacity-50"
+            className="w-full py-3 bg-black text-white text-sm font-medium tracking-wide hover:bg-gray-800 transition-colors disabled:opacity-50"
           >
             {loading ? 'Iniciando...' : 'Iniciar Sesión'}
           </button>
