@@ -39,6 +39,21 @@ export default function Dashboard() {
   const [uploading, setUploading] = useState(false);
   const [tags, setTags] = useState<string[]>([]);
 
+  // Funciones para reordenar imágenes
+  const moveImageUp = (index: number) => {
+    if (index === 0) return;
+    const newImages = [...existingImages];
+    [newImages[index - 1], newImages[index]] = [newImages[index], newImages[index - 1]];
+    setExistingImages(newImages);
+  };
+
+  const moveImageDown = (index: number) => {
+    if (index === existingImages.length - 1) return;
+    const newImages = [...existingImages];
+    [newImages[index], newImages[index + 1]] = [newImages[index + 1], newImages[index]];
+    setExistingImages(newImages);
+  };
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (!currentUser) {
@@ -411,16 +426,44 @@ export default function Dashboard() {
                 
                 {/* Imágenes existentes (al editar) */}
                 {existingImages.length > 0 && imagePreviews.length === 0 && (
-                  <div className="flex gap-2 mt-2 flex-wrap">
-                    {existingImages.map((img, idx) => (
-                      <div key={idx} className="relative w-20 h-20">
-                        <img
-                          src={img}
-                          alt={`Imagen ${idx + 1}`}
-                          className="w-full h-full object-cover rounded-md"
-                        />
-                      </div>
-                    ))}
+                  <div className="mt-2">
+                    <p className="text-xs text-gray-500 mb-2">Arrastra o usa los botones para ordenar:</p>
+                    <div className="flex gap-2 flex-wrap">
+                      {existingImages.map((img, idx) => (
+                        <div key={idx} className="relative group">
+                          <img
+                            src={img}
+                            alt={`Imagen ${idx + 1}`}
+                            className="w-20 h-20 object-cover rounded-md"
+                          />
+                          <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1 rounded-md">
+                            <button
+                              type="button"
+                              onClick={() => moveImageUp(idx)}
+                              disabled={idx === 0}
+                              className="p-1 bg-white rounded disabled:opacity-30"
+                            >
+                              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                              </svg>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => moveImageDown(idx)}
+                              disabled={idx === existingImages.length - 1}
+                              className="p-1 bg-white rounded disabled:opacity-30"
+                            >
+                              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                              </svg>
+                            </button>
+                          </div>
+                          {idx === 0 && (
+                            <span className="absolute -top-2 -left-2 bg-black text-white text-[10px] px-1 rounded">Principal</span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
