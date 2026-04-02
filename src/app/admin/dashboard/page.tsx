@@ -105,8 +105,8 @@ export default function Dashboard() {
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
-    if (files.length < 2) {
-      alert('Selecciona al menos 2 fotos');
+    if (files.length < 1) {
+      alert('Selecciona al menos 1 foto');
       return;
     }
     
@@ -149,7 +149,7 @@ export default function Dashboard() {
     e.preventDefault();
     
     if (imageFiles.length === 0 && existingImages.length === 0) {
-      alert('Por favor selecciona al menos 2 fotos del perfume');
+      alert('Por favor selecciona al menos 1 foto del perfume');
       return;
     }
 
@@ -395,7 +395,7 @@ export default function Dashboard() {
 
               <div>
                 <label className="block text-sm text-gray-500 mb-1">
-                  Fotos del perfume (mínimo 2)
+                  Fotos del perfume (mínimo 1)
                 </label>
                 <input
                   type="file"
