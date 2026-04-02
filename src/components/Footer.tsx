@@ -8,7 +8,7 @@ export default function Footer() {
       {/* Info Section - Dark with shipping/delivery info */}
       <div className="border-t border-zinc-800">
         <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             {/* Envíos */}
             <div>
               <h3 className="font-serif text-lg text-white mb-4 tracking-wide">
@@ -28,6 +28,17 @@ export default function Footer() {
                 <li>• Entregas presenciales gratuitas dentro de la comuna.</li>
                 <li>• Retiro en nuestro domicilio.</li>
                 <li>• Entregas en comunas vecinas: coordinar costo y disponibilidad.</li>
+              </ul>
+            </div>
+
+            {/* Contacto */}
+            <div>
+              <h3 className="font-serif text-lg text-white mb-4 tracking-wide">
+                Contacto
+              </h3>
+              <ul className="space-y-2 text-sm text-zinc-400">
+                <li>+56 9 5088 7666</li>
+                <li>Los Álamos, Octava Región</li>
               </ul>
             </div>
           </div>
