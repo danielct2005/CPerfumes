@@ -93,12 +93,12 @@ export default function Home() {
       
       <div className="flex-1 max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-12 w-full">
         {/* Banner - Imagen principal */}
-        <div className="mb-12 flex justify-center w-full">
-          <div className="relative w-full max-w-6xl aspect-[21/9] md:aspect-[3/1] overflow-hidden rounded-2xl shadow-2xl">
+        <div className="mb-12 flex justify-center w-full mx-auto">
+          <div className="w-full max-w-4xl rounded-2xl shadow-xl">
             <img 
               src="/banner-principal.jpg.jpeg" 
               alt="FRAGANZZA - Perfumería Premium"
-              className="w-full h-full object-cover transform hover:scale-105 transition-transform duration-700"
+              className="w-full h-auto rounded-2xl"
             />
           </div>
         </div>
