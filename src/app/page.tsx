@@ -31,8 +31,7 @@ export default function Home() {
       try {
         const q = query(
           collection(db, 'perfumes'), 
-          where('status', '==', true),
-          orderBy('createdAt', 'desc')
+          where('status', '==', true)
         );
         const snapshot = await getDocs(q);
         const perfumes = snapshot.docs.map((doc) => {
