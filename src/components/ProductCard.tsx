@@ -1,6 +1,8 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Perfume } from '@/types';
 import { useCart } from '@/context/cart-context';
 
@@ -10,6 +12,7 @@ interface ProductCardProps {
 
 export default function ProductCard({ perfume }: ProductCardProps) {
   const { addItem } = useCart();
+  const [showToast, setShowToast] = useState(false);
 
   // Función para obtener URL optimizada de Cloudinary
   const getOptimizedUrl = (url: string) => {
@@ -30,6 +33,8 @@ export default function ProductCard({ perfume }: ProductCardProps) {
     e.preventDefault();
     e.stopPropagation();
     addItem(perfume);
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 2500);
   };
 
   return (
@@ -107,6 +112,20 @@ export default function ProductCard({ perfume }: ProductCardProps) {
           ${perfume.price.toLocaleString('es-CL')}
         </p>
       </div>
+
+      {/* Toast de confirmación */}
+      <AnimatePresence>
+        {showToast && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            className="fixed bottom-20 right-6 bg-black text-white px-4 py-2 rounded-lg shadow-lg text-xs font-medium tracking-wide z-50"
+          >
+            ✓ Añadido al carrito
+          </motion.div>
+        )}
+      </AnimatePresence>
     </Link>
   );
 }
