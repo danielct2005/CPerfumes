@@ -8,7 +8,13 @@ import ProductGrid from '@/components/ProductGrid';
 import FilterBar from '@/components/FilterBar';
 import { CategoryFilter, PriceSort, TagFilter } from '@/components/FilterBar';
 import { db } from '@/lib/firebase';
-import { collection, getDocs, query, orderBy } from 'firebase/firestore';
+import {
+  collection,
+  getDocs,
+  query,
+  orderBy,
+  where,
+} from 'firebase/firestore';
 import { Perfume } from '@/types';
 
 export default function Home() {
@@ -23,7 +29,11 @@ export default function Home() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const q = query(collection(db, 'perfumes'), orderBy('createdAt', 'desc'));
+        const q = query(
+          collection(db, 'perfumes'), 
+          where('status', '==', true),
+          orderBy('createdAt', 'desc')
+        );
         const snapshot = await getDocs(q);
         const perfumes = snapshot.docs.map((doc) => {
           const data = doc.data();

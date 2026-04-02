@@ -9,6 +9,7 @@ export interface Perfume {
   images?: string[]; // Array de URLs para galería dinámica
   description?: string;
   tags?: ('tendencias' | 'mas-vendidos')[]; // Etiquetas para filtros
+  status?: boolean; // Stock status: true = en stock, false = sin stock
   createdAt: number;
 }
 

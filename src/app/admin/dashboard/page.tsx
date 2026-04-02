@@ -176,6 +176,9 @@ export default function Dashboard() {
         imageUrl: finalImages[0], // Primera imagen como principal
         images: finalImages, // Array completo de imágenes
         tags,
+        status: editingId 
+          ? products.find(p => p.id === editingId)?.status ?? true
+          : true,
         createdAt: editingId 
           ? products.find(p => p.id === editingId)?.createdAt || Date.now()
           : Date.now(),
@@ -236,6 +239,18 @@ export default function Dashboard() {
       await fetchProducts();
     } catch (error) {
       console.error('Error deleting perfume:', error);
+    }
+  };
+
+  // Toggle stock status
+  const toggleStatus = async (id: string, currentStatus: boolean) => {
+    try {
+      await updateDoc(doc(db, 'perfumes', id), {
+        status: !currentStatus
+      });
+      await fetchProducts();
+    } catch (error) {
+      console.error('Error toggling status:', error);
     }
   };
 
@@ -489,20 +504,27 @@ export default function Dashboard() {
               Productos ({products.length})
             </h2>
             <div className="space-y-3 max-h-[600px] overflow-y-auto">
-              {products.map((product) => (
+              {products.map((product) => {
+                const isOutOfStock = product.status === false;
+                return (
                 <div
                   key={product.id}
-                  className="flex items-center gap-4 p-3 border border-gray-100"
+                  className={`flex items-center gap-4 p-3 border ${isOutOfStock ? 'border-red-200 bg-red-50/30' : 'border-gray-100'}`}
                 >
                   <div className="w-16 h-16 relative flex-shrink-0 bg-gray-50">
                     <img
                       src={product.imageUrl}
                       alt={product.name}
-                      className="w-full h-full object-cover"
+                      className={`w-full h-full object-cover ${isOutOfStock ? 'opacity-50' : ''}`}
                     />
+                    {isOutOfStock && (
+                      <span className="absolute top-0 left-0 right-0 bg-red-500 text-white text-[10px] text-center py-0.5">
+                        Sin Stock
+                      </span>
+                    )}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-sm font-medium text-black truncate">
+                    <h3 className={`text-sm font-medium truncate ${isOutOfStock ? 'text-red-600' : 'text-black'}`}>
                       {product.name}
                     </h3>
                     <p className="text-xs text-gray-400">{product.brand}</p>
@@ -522,6 +544,21 @@ export default function Dashboard() {
                       </div>
                     )}
                   </div>
+
+                  {/* Stock Toggle */}
+                  <button
+                    onClick={() => toggleStatus(product.id, product.status ?? true)}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                      product.status === false ? 'bg-red-400' : 'bg-green-500'
+                    }`}
+                    title={product.status === false ? 'Activar stock' : 'Desactivar stock'}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                        product.status === false ? 'translate-x-1' : 'translate-x-6'
+                      }`}
+                    />
+                  </button>
                   
                   {/* Edit Button */}
                   <button
@@ -564,7 +601,8 @@ export default function Dashboard() {
                     </svg>
                   </button>
                 </div>
-              ))}
+                );
+              })}
               {products.length === 0 && (
                 <p className="text-center text-gray-300 py-8 text-sm">
                   No hay perfumes aún. Añade el primero!
