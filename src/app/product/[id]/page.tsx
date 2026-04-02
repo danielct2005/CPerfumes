@@ -18,6 +18,7 @@ export default function ProductDetail() {
   const [product, setProduct] = useState<Perfume | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [showToast, setShowToast] = useState(false);
 
   // Función para obtener URL optimizada de Cloudinary
   const getOptimizedUrl = (url: string) => {
@@ -70,6 +71,8 @@ export default function ProductDetail() {
   const handleAddToCart = () => {
     if (product) {
       addItem(product);
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 2500);
     }
   };
 
@@ -239,6 +242,20 @@ export default function ProductDetail() {
             >
               Añadir al carrito
             </button>
+
+            {/* Toast de confirmación */}
+            <AnimatePresence>
+              {showToast && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 20 }}
+                  className="fixed bottom-8 left-1/2 -translate-x-1/2 bg-black text-white px-6 py-3 rounded-lg shadow-lg text-sm font-medium tracking-wide z-50"
+                >
+                  ✓ Añadido al carrito
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </main>
