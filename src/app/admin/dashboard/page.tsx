@@ -401,12 +401,11 @@ export default function Dashboard() {
                   type="file"
                   accept="image/*"
                   multiple
-                  capture="environment"
                   onChange={handleImageChange}
                   className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-black file:text-white hover:file:bg-gray-800"
                 />
                 <p className="text-xs text-gray-300 mt-1">
-                  O usa la cámara del celular directamente
+                  Selecciona varias fotos de la galería
                 </p>
                 
                 {/* Previews de nuevas imágenes */}
