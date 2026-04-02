@@ -45,10 +45,10 @@ export default function Footer() {
             </h4>
             <ul className="space-y-2">
               <li className="text-sm text-gray-400">
-                contacto@fraganzza.cl
+                +56 9 5088 7666
               </li>
               <li className="text-sm text-gray-400">
-                Santiago, Chile
+                Los Álamos, Octava Región
               </li>
             </ul>
           </div>
