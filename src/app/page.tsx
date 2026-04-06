@@ -47,6 +47,9 @@ export default function Home() {
             images: data.images || [],
             tags: data.tags || [],
             description: data.description,
+            status: data.status ?? true,
+            discountPrice: data.discountPrice,
+            isOnSale: data.isOnSale,
             createdAt: data.createdAt,
           };
         }) as Perfume[];

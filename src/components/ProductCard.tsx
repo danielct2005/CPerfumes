@@ -85,6 +85,13 @@ export default function ProductCard({ perfume }: ProductCardProps) {
         >
           Añadir al carrito
         </button>
+
+        {/* Oferta Badge */}
+        {perfume.isOnSale && perfume.discountPrice && (
+          <div className="absolute top-3 right-3 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded shadow-lg">
+            OFERTA
+          </div>
+        )}
       </div>
 
       {/* Product Info */}
