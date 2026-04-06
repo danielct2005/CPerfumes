@@ -724,6 +724,12 @@ export default function Dashboard() {
                   Todo ON
                 </button>
                 <button
+                  onClick={() => applyDiscountToAll(5)}
+                  className="px-3 py-1.5 text-xs bg-yellow-100 text-yellow-700 hover:bg-yellow-200 transition-colors rounded"
+                >
+                  -5%
+                </button>
+                <button
                   onClick={() => applyDiscountToAll(10)}
                   className="px-3 py-1.5 text-xs bg-yellow-100 text-yellow-700 hover:bg-yellow-200 transition-colors rounded"
                 >
