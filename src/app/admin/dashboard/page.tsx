@@ -560,11 +560,11 @@ export default function Dashboard() {
                 return (
                 <div
                   key={product.id}
-                  className={`flex items-center justify-between p-3 border ${isOutOfStock ? 'border-red-200 bg-red-50/30' : 'border-gray-100'}`}
+                  className={`flex flex-col md:flex-row md:items-center md:justify-between p-3 border gap-3 ${isOutOfStock ? 'border-red-200 bg-red-50/30' : 'border-gray-100'}`}
                 >
                   {/* Left: Image + Name + Brand */}
-                  <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 relative flex-shrink-0 bg-gray-50">
+                  <div className="flex items-center gap-3">
+                    <div className="w-14 h-14 md:w-16 md:h-16 relative flex-shrink-0 bg-gray-50">
                       <img
                         src={product.imageUrl}
                         alt={product.name}
@@ -590,9 +590,9 @@ export default function Dashboard() {
                   </div>
 
                   {/* Center: Price */}
-                  <div className="text-center px-4">
+                  <div className="text-left md:text-center md:px-4">
                     {isOnSale ? (
-                      <div className="flex flex-col items-center">
+                      <div className="flex flex-col">
                         <span className="text-xs text-gray-400 line-through">
                           ${product.price.toLocaleString('es-CL')}
                         </span>
@@ -608,7 +608,7 @@ export default function Dashboard() {
                   </div>
 
                   {/* Right: Actions */}
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-end gap-2">
                     {/* Stock Toggle */}
                     <button
                       onClick={() => toggleStatus(product.id, product.status ?? true)}
