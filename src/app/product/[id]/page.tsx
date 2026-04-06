@@ -10,6 +10,7 @@ import { Perfume } from '@/types';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { useCart } from '@/context/cart-context';
+import Toast from '@/components/Toast';
 
 export default function ProductDetail() {
   const params = useParams();
@@ -257,18 +258,7 @@ export default function ProductDetail() {
             </button>
 
             {/* Toast de confirmación */}
-            <AnimatePresence>
-              {showToast && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 20 }}
-                  className="fixed bottom-8 left-1/2 -translate-x-1/2 bg-black text-white px-6 py-3 rounded-lg shadow-lg text-sm font-medium tracking-wide z-50"
-                >
-                  ✓ Añadido al carrito
-                </motion.div>
-              )}
-            </AnimatePresence>
+            <Toast show={showToast} message="✓ Añadido al carrito" onClose={() => setShowToast(false)} />
           </div>
         </div>
       </main>

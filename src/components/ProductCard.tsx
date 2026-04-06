@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Perfume } from '@/types';
 import { useCart } from '@/context/cart-context';
+import Toast from '@/components/Toast';
 
 interface ProductCardProps {
   perfume: Perfume;
@@ -127,18 +127,7 @@ export default function ProductCard({ perfume }: ProductCardProps) {
       </div>
 
       {/* Toast de confirmación */}
-      <AnimatePresence>
-        {showToast && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-            className="fixed bottom-20 right-6 bg-black text-white px-4 py-2 rounded-lg shadow-lg text-xs font-medium tracking-wide z-50"
-          >
-            ✓ Añadido al carrito
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <Toast show={showToast} message="✓ Añadido al carrito" onClose={() => setShowToast(false)} />
     </Link>
   );
 }
