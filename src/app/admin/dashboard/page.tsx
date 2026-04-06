@@ -259,6 +259,57 @@ export default function Dashboard() {
     }
   };
 
+  // Toggle discount for a single product
+  const toggleDiscount = async (id: string, product: Perfume) => {
+    try {
+      const newIsOnSale = !(product.isOnSale === true);
+      if (newIsOnSale && !product.discountPrice) {
+        // If enabling sale but no discount price, set to 80% of original
+        await updateDoc(doc(db, 'perfumes', id), {
+          isOnSale: true,
+          discountPrice: Math.round(product.price * 0.8)
+        });
+      } else {
+        await updateDoc(doc(db, 'perfumes', id), {
+          isOnSale: newIsOnSale,
+          discountPrice: newIsOnSale ? product.discountPrice : null
+        });
+      }
+      await fetchProducts();
+    } catch (error) {
+      console.error('Error toggling discount:', error);
+    }
+  };
+
+  // Apply discount to all products
+  const applyDiscountToAll = async (percentage: number) => {
+    if (!confirm(`¿Aplicar ${percentage}% de descuento a todos los productos?`)) return;
+    setLoading(true);
+    for (const p of products) {
+      const newPrice = Math.round(p.price * (1 - percentage / 100));
+      await updateDoc(doc(db, 'perfumes', p.id), {
+        isOnSale: true,
+        discountPrice: newPrice
+      });
+    }
+    await fetchProducts();
+    setLoading(false);
+  };
+
+  // Remove all discounts
+  const removeAllDiscounts = async () => {
+    if (!confirm('¿Quitar todos los descuentos?')) return;
+    setLoading(true);
+    for (const p of products) {
+      await updateDoc(doc(db, 'perfumes', p.id), {
+        isOnSale: false,
+        discountPrice: null
+      });
+    }
+    await fetchProducts();
+    setLoading(false);
+  };
+
   const toggleTag = (tag: string) => {
     setTags(prev => 
       prev.includes(tag) 
@@ -518,11 +569,11 @@ export default function Dashboard() {
 
           {/* Products List */}
           <div className="bg-white p-6">
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-3">
               <h2 className="text-lg font-medium text-black tracking-wide">
                 Productos ({products.length})
               </h2>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <button
                   onClick={async () => {
                     if (!confirm('¿Poner toda la tienda en OFF?')) return;
@@ -535,7 +586,7 @@ export default function Dashboard() {
                   }}
                   className="px-3 py-1.5 text-xs bg-red-100 text-red-600 hover:bg-red-200 transition-colors rounded"
                 >
-                  Toda la tienda OFF
+                  Todo OFF
                 </button>
                 <button
                   onClick={async () => {
@@ -549,7 +600,25 @@ export default function Dashboard() {
                   }}
                   className="px-3 py-1.5 text-xs bg-green-100 text-green-600 hover:bg-green-200 transition-colors rounded"
                 >
-                  Toda la tienda ON
+                  Todo ON
+                </button>
+                <button
+                  onClick={() => applyDiscountToAll(20)}
+                  className="px-3 py-1.5 text-xs bg-yellow-100 text-yellow-700 hover:bg-yellow-200 transition-colors rounded"
+                >
+                  -20% Todo
+                </button>
+                <button
+                  onClick={() => applyDiscountToAll(30)}
+                  className="px-3 py-1.5 text-xs bg-orange-100 text-orange-700 hover:bg-orange-200 transition-colors rounded"
+                >
+                  -30% Todo
+                </button>
+                <button
+                  onClick={removeAllDiscounts}
+                  className="px-3 py-1.5 text-xs bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors rounded"
+                >
+                  Quitar Desc.
                 </button>
               </div>
             </div>
@@ -609,6 +678,21 @@ export default function Dashboard() {
 
                   {/* Right: Actions */}
                   <div className="flex items-center justify-end gap-2">
+                    {/* Discount Toggle */}
+                    <button
+                      onClick={() => toggleDiscount(product.id, product)}
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                        isOnSale ? 'bg-yellow-400' : 'bg-gray-200'
+                      }`}
+                      title={isOnSale ? 'Quitar descuento' : 'Aplicar descuento (20%)'}
+                    >
+                      <span
+                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                          isOnSale ? 'translate-x-6' : 'translate-x-1'
+                        }`}
+                      />
+                    </button>
+
                     {/* Stock Toggle */}
                     <button
                       onClick={() => toggleStatus(product.id, product.status ?? true)}
