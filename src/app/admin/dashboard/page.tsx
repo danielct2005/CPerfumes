@@ -33,6 +33,7 @@ export default function Dashboard() {
   const [category, setCategory] = useState<'hombre' | 'mujer' | 'unisex'>('mujer');
   const [notes, setNotes] = useState('');
   const [price, setPrice] = useState('');
+  const [discountPrice, setDiscountPrice] = useState('');
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [existingImages, setExistingImages] = useState<string[]>([]);
@@ -173,6 +174,8 @@ export default function Dashboard() {
         category,
         notes: notes.split(',').map((n) => n.trim()),
         price: parseNumber(price),
+        discountPrice: discountPrice ? parseNumber(discountPrice) : null,
+        isOnSale: discountPrice && parseNumber(discountPrice) > 0 ? true : false,
         imageUrl: finalImages[0], // Primera imagen como principal
         images: finalImages, // Array completo de imágenes
         tags,
@@ -210,6 +213,7 @@ export default function Dashboard() {
     setCategory(product.category);
     setNotes(product.notes?.join(', ') || '');
     setPrice(product.price.toLocaleString('es-CL'));
+    setDiscountPrice(product.discountPrice ? product.discountPrice.toLocaleString('es-CL') : '');
     setTags(product.tags || []);
     setExistingImages(product.images || [product.imageUrl]);
     setImageFiles([]);
@@ -223,6 +227,7 @@ export default function Dashboard() {
     setCategory('mujer');
     setNotes('');
     setPrice('');
+    setDiscountPrice('');
     setImageFiles([]);
     setImagePreviews([]);
     setExistingImages([]);
@@ -410,6 +415,19 @@ export default function Dashboard() {
 
               <div>
                 <label className="block text-sm text-gray-500 mb-1">
+                  Precio de Oferta (opcional)
+                </label>
+                <input
+                  type="text"
+                  value={discountPrice}
+                  onChange={(e) => setDiscountPrice(formatNumber(e.target.value))}
+                  placeholder="Ej: 80.000"
+                  className="w-full px-4 py-2 border border-gray-200 bg-gray-50 text-black text-sm tracking-wide focus:outline-none focus:border-black transition-colors"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm text-gray-500 mb-1">
                   Fotos del perfume (mínimo 1)
                 </label>
                 <input
@@ -500,106 +518,153 @@ export default function Dashboard() {
 
           {/* Products List */}
           <div className="bg-white p-6">
-            <h2 className="text-lg font-medium text-black tracking-wide mb-6">
-              Productos ({products.length})
-            </h2>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-medium text-black tracking-wide">
+                Productos ({products.length})
+              </h2>
+              <div className="flex gap-2">
+                <button
+                  onClick={async () => {
+                    if (!confirm('¿Poner toda la tienda en OFF?')) return;
+                    setLoading(true);
+                    for (const p of products) {
+                      await updateDoc(doc(db, 'perfumes', p.id), { status: false });
+                    }
+                    await fetchProducts();
+                    setLoading(false);
+                  }}
+                  className="px-3 py-1.5 text-xs bg-red-100 text-red-600 hover:bg-red-200 transition-colors rounded"
+                >
+                  Toda la tienda OFF
+                </button>
+                <button
+                  onClick={async () => {
+                    if (!confirm('¿Poner toda la tienda en ON?')) return;
+                    setLoading(true);
+                    for (const p of products) {
+                      await updateDoc(doc(db, 'perfumes', p.id), { status: true });
+                    }
+                    await fetchProducts();
+                    setLoading(false);
+                  }}
+                  className="px-3 py-1.5 text-xs bg-green-100 text-green-600 hover:bg-green-200 transition-colors rounded"
+                >
+                  Toda la tienda ON
+                </button>
+              </div>
+            </div>
             <div className="space-y-3 max-h-[600px] overflow-y-auto">
               {products.map((product) => {
                 const isOutOfStock = product.status === false;
+                const isOnSale = product.isOnSale === true && product.discountPrice;
                 return (
                 <div
                   key={product.id}
-                  className={`flex items-center gap-4 p-3 border ${isOutOfStock ? 'border-red-200 bg-red-50/30' : 'border-gray-100'}`}
+                  className={`flex items-center justify-between p-3 border ${isOutOfStock ? 'border-red-200 bg-red-50/30' : 'border-gray-100'}`}
                 >
-                  <div className="w-16 h-16 relative flex-shrink-0 bg-gray-50">
-                    <img
-                      src={product.imageUrl}
-                      alt={product.name}
-                      className={`w-full h-full object-cover ${isOutOfStock ? 'opacity-50' : ''}`}
-                    />
-                    {isOutOfStock && (
-                      <span className="absolute top-0 left-0 right-0 bg-red-500 text-white text-[10px] text-center py-0.5">
-                        Sin Stock
+                  {/* Left: Image + Name + Brand */}
+                  <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 relative flex-shrink-0 bg-gray-50">
+                      <img
+                        src={product.imageUrl}
+                        alt={product.name}
+                        className={`w-full h-full object-cover ${isOutOfStock ? 'opacity-50' : ''}`}
+                      />
+                      {isOutOfStock && (
+                        <span className="absolute top-0 left-0 right-0 bg-red-500 text-white text-[10px] text-center py-0.5">
+                          Sin Stock
+                        </span>
+                      )}
+                      {isOnSale && (
+                        <span className="absolute bottom-0 left-0 right-0 bg-red-500 text-white text-[10px] text-center py-0.5">
+                          OFERTA
+                        </span>
+                      )}
+                    </div>
+                    <div className="min-w-0">
+                      <h3 className={`text-sm font-medium truncate ${isOutOfStock ? 'text-red-600' : 'text-black'}`}>
+                        {product.name}
+                      </h3>
+                      <p className="text-xs text-gray-400">{product.brand}</p>
+                    </div>
+                  </div>
+
+                  {/* Center: Price */}
+                  <div className="text-center px-4">
+                    {isOnSale ? (
+                      <div className="flex flex-col items-center">
+                        <span className="text-xs text-gray-400 line-through">
+                          ${product.price.toLocaleString('es-CL')}
+                        </span>
+                        <span className="text-sm font-bold text-red-600">
+                          ${product.discountPrice?.toLocaleString('es-CL')}
+                        </span>
+                      </div>
+                    ) : (
+                      <span className="text-sm font-medium text-black">
+                        ${product.price.toLocaleString('es-CL')}
                       </span>
                     )}
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className={`text-sm font-medium truncate ${isOutOfStock ? 'text-red-600' : 'text-black'}`}>
-                      {product.name}
-                    </h3>
-                    <p className="text-xs text-gray-400">{product.brand}</p>
-                    <p className="text-sm font-medium text-black mt-1">
-                      ${product.price.toLocaleString('es-CL')}
-                    </p>
-                    {product.tags && product.tags.length > 0 && (
-                      <div className="flex gap-1 mt-1">
-                        {product.tags.map((tag) => (
-                          <span
-                            key={tag}
-                            className="px-2 py-0.5 text-[10px] bg-black text-white"
-                          >
-                            {tag === 'tendencias' ? 'Tendencias' : 'Más Vendidos'}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-                  </div>
 
-                  {/* Stock Toggle */}
-                  <button
-                    onClick={() => toggleStatus(product.id, product.status ?? true)}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                      product.status === false ? 'bg-red-400' : 'bg-green-500'
-                    }`}
-                    title={product.status === false ? 'Activar stock' : 'Desactivar stock'}
-                  >
-                    <span
-                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                        product.status === false ? 'translate-x-1' : 'translate-x-6'
+                  {/* Right: Actions */}
+                  <div className="flex items-center gap-3">
+                    {/* Stock Toggle */}
+                    <button
+                      onClick={() => toggleStatus(product.id, product.status ?? true)}
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                        product.status === false ? 'bg-red-400' : 'bg-green-500'
                       }`}
-                    />
-                  </button>
-                  
-                  {/* Edit Button */}
-                  <button
-                    onClick={() => handleEdit(product)}
-                    className="p-2 text-gray-300 hover:text-black transition-colors"
-                    title="Editar"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
+                      title={product.status === false ? 'Activar stock' : 'Desactivar stock'}
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                      <span
+                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                          product.status === false ? 'translate-x-1' : 'translate-x-6'
+                        }`}
                       />
-                    </svg>
-                  </button>
-                  
-                  {/* Delete Button */}
-                  <button
-                    onClick={() => handleDelete(product.id)}
-                    className="p-2 text-gray-300 hover:text-red-500 transition-colors"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
+                    </button>
+                    
+                    {/* Edit Button */}
+                    <button
+                      onClick={() => handleEdit(product)}
+                      className="p-2 text-gray-300 hover:text-black transition-colors"
+                      title="Editar"
                     >
-                      <path
-                        fillRule="evenodd"
-                        d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </button>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                        />
+                      </svg>
+                    </button>
+                    
+                    {/* Delete Button */}
+                    <button
+                      onClick={() => handleDelete(product.id)}
+                      className="p-2 text-gray-300 hover:text-red-500 transition-colors"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-5 w-5"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
                 );
               })}

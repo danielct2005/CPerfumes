@@ -200,9 +200,22 @@ export default function ProductDetail() {
             <p className="text-lg text-gray-400 mt-1">{product.brand}</p>
 
             {/* Price */}
-            <p className="text-2xl font-semibold text-black mt-6">
-              ${product.price.toLocaleString('es-CL')}
-            </p>
+            <div className="mt-6">
+              {product.isOnSale && product.discountPrice ? (
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl font-semibold text-red-600">
+                    ${product.discountPrice.toLocaleString('es-CL')}
+                  </span>
+                  <span className="text-lg font-semibold text-gray-400 line-through">
+                    ${product.price.toLocaleString('es-CL')}
+                  </span>
+                </div>
+              ) : (
+                <p className="text-2xl font-semibold text-black">
+                  ${product.price.toLocaleString('es-CL')}
+                </p>
+              )}
+            </div>
 
             {/* Notes */}
             {product.notes && product.notes.length > 0 && (

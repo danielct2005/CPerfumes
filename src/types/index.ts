@@ -10,6 +10,8 @@ export interface Perfume {
   description?: string;
   tags?: ('tendencias' | 'mas-vendidos')[]; // Etiquetas para filtros
   status?: boolean; // Stock status: true = en stock, false = sin stock
+  discountPrice?: number; // Precio de oferta
+  isOnSale?: boolean; // Está en oferta
   createdAt: number;
 }
 

@@ -108,9 +108,22 @@ export default function ProductCard({ perfume }: ProductCardProps) {
         )}
 
         {/* Price */}
-        <p className="text-lg font-semibold text-black mt-3">
-          ${perfume.price.toLocaleString('es-CL')}
-        </p>
+        <div className="mt-3">
+          {perfume.isOnSale && perfume.discountPrice ? (
+            <div className="flex items-center gap-2">
+              <span className="text-lg font-semibold text-red-600">
+                ${perfume.discountPrice.toLocaleString('es-CL')}
+              </span>
+              <span className="text-sm font-semibold text-gray-400 line-through">
+                ${perfume.price.toLocaleString('es-CL')}
+              </span>
+            </div>
+          ) : (
+            <p className="text-lg font-semibold text-black">
+              ${perfume.price.toLocaleString('es-CL')}
+            </p>
+          )}
+        </div>
       </div>
 
       {/* Toast de confirmación */}
