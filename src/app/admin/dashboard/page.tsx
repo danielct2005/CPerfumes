@@ -130,10 +130,24 @@ export default function Dashboard() {
     try {
       const q = query(collection(db, 'perfumes'), orderBy('createdAt', 'desc'));
       const snapshot = await getDocs(q);
-      const perfumes = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as Perfume[];
+      const perfumes = snapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          name: data.name,
+          brand: data.brand,
+          category: data.category,
+          notes: data.notes || [],
+          price: data.price || 0,
+          imageUrl: data.imageUrl || '',
+          images: data.images || [],
+          tags: data.tags || [],
+          status: data.status ?? true,
+          discountPrice: data.discountPrice,
+          isOnSale: data.isOnSale,
+          createdAt: data.createdAt,
+        };
+      }) as Perfume[];
       setProducts(perfumes);
     } catch (error) {
       console.error('Error fetching products:', error);
