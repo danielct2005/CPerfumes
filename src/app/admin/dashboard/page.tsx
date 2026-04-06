@@ -15,9 +15,56 @@ import {
   orderBy,
 } from 'firebase/firestore';
 import { Perfume } from '@/types';
-import Link from 'next/link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+
+// Custom Confirmation Modal Component
+function ConfirmModal({ 
+  isOpen, 
+  title, 
+  message, 
+  confirmText, 
+  cancelText, 
+  onConfirm, 
+  onCancel,
+  danger = false 
+}: { 
+  isOpen: boolean;
+  title: string;
+  message: string;
+  confirmText: string;
+  cancelText: string;
+  onConfirm: () => void;
+  onCancel: () => void;
+  danger?: boolean;
+}) {
+  if (!isOpen) return null;
+  
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-xl shadow-2xl p-6 max-w-sm mx-4 transform transition-all">
+        <h3 className="text-lg font-semibold text-black mb-2">{title}</h3>
+        <p className="text-sm text-gray-500 mb-6">{message}</p>
+        <div className="flex gap-3 justify-end">
+          <button
+            onClick={onCancel}
+            className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            {cancelText}
+          </button>
+          <button
+            onClick={onConfirm}
+            className={`px-4 py-2 text-sm text-white rounded-lg transition-colors ${
+              danger ? 'bg-red-500 hover:bg-red-600' : 'bg-black hover:bg-gray-800'
+            }`}
+          >
+            {confirmText}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function Dashboard() {
   const [user, setUser] = useState<any>(null);
@@ -25,6 +72,17 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const router = useRouter();
+
+  // Modal state
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalConfig, setModalConfig] = useState({
+    title: '',
+    message: '',
+    confirmText: 'Confirmar',
+    cancelText: 'Cancelar',
+    danger: false,
+    onConfirm: () => {}
+  });
 
   // Form state
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -235,16 +293,24 @@ export default function Dashboard() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('¿Estás seguro de que quieres eliminar este perfume?')) {
-      return;
-    }
-
-    try {
-      await deleteDoc(doc(db, 'perfumes', id));
-      await fetchProducts();
-    } catch (error) {
-      console.error('Error deleting perfume:', error);
-    }
+    const productName = products.find(p => p.id === id)?.name || 'este perfume';
+    setModalConfig({
+      title: 'Eliminar Producto',
+      message: `¿Estás seguro de que quieres eliminar "${productName}"? Esta acción no se puede deshacer.`,
+      confirmText: 'Eliminar',
+      cancelText: 'Cancelar',
+      danger: true,
+      onConfirm: async () => {
+        setModalOpen(false);
+        try {
+          await deleteDoc(doc(db, 'perfumes', id));
+          await fetchProducts();
+        } catch (error) {
+          console.error('Error deleting perfume:', error);
+        }
+      }
+    });
+    setModalOpen(true);
   };
 
   // Toggle stock status
@@ -283,31 +349,52 @@ export default function Dashboard() {
 
   // Apply discount to all products
   const applyDiscountToAll = async (percentage: number) => {
-    if (!confirm(`¿Aplicar ${percentage}% de descuento a todos los productos?`)) return;
-    setLoading(true);
-    for (const p of products) {
-      const newPrice = Math.round(p.price * (1 - percentage / 100));
-      await updateDoc(doc(db, 'perfumes', p.id), {
-        isOnSale: true,
-        discountPrice: newPrice
-      });
-    }
-    await fetchProducts();
-    setLoading(false);
+    const totalProducts = products.length;
+    setModalConfig({
+      title: 'Aplicar Descuento',
+      message: `¿Aplicar ${percentage}% de descuento a los ${totalProducts} productos? El nuevo precio será calculado automáticamente.`,
+      confirmText: 'Aplicar',
+      cancelText: 'Cancelar',
+      danger: false,
+      onConfirm: async () => {
+        setModalOpen(false);
+        setLoading(true);
+        for (const p of products) {
+          const newPrice = Math.round(p.price * (1 - percentage / 100));
+          await updateDoc(doc(db, 'perfumes', p.id), {
+            isOnSale: true,
+            discountPrice: newPrice
+          });
+        }
+        await fetchProducts();
+        setLoading(false);
+      }
+    });
+    setModalOpen(true);
   };
 
   // Remove all discounts
   const removeAllDiscounts = async () => {
-    if (!confirm('¿Quitar todos los descuentos?')) return;
-    setLoading(true);
-    for (const p of products) {
-      await updateDoc(doc(db, 'perfumes', p.id), {
-        isOnSale: false,
-        discountPrice: null
-      });
-    }
-    await fetchProducts();
-    setLoading(false);
+    setModalConfig({
+      title: 'Quitar Descuentos',
+      message: '¿Estás seguro de que quieres quitar todos los descuentos? Todos los productos volverán a su precio original.',
+      confirmText: 'Quitar Todos',
+      cancelText: 'Cancelar',
+      danger: true,
+      onConfirm: async () => {
+        setModalOpen(false);
+        setLoading(true);
+        for (const p of products) {
+          await updateDoc(doc(db, 'perfumes', p.id), {
+            isOnSale: false,
+            discountPrice: null
+          });
+        }
+        await fetchProducts();
+        setLoading(false);
+      }
+    });
+    setModalOpen(true);
   };
 
   const toggleTag = (tag: string) => {
@@ -575,44 +662,82 @@ export default function Dashboard() {
               </h2>
               <div className="flex flex-wrap gap-2">
                 <button
-                  onClick={async () => {
-                    if (!confirm('¿Poner toda la tienda en OFF?')) return;
-                    setLoading(true);
-                    for (const p of products) {
-                      await updateDoc(doc(db, 'perfumes', p.id), { status: false });
-                    }
-                    await fetchProducts();
-                    setLoading(false);
+                  onClick={() => {
+                    setModalConfig({
+                      title: 'Desactivar Todo',
+                      message: '¿Estás seguro de que quieres desactivar todos los productos? Todos desaparecerán de la tienda.',
+                      confirmText: 'Desactivar Todo',
+                      cancelText: 'Cancelar',
+                      danger: true,
+                      onConfirm: async () => {
+                        setModalOpen(false);
+                        setLoading(true);
+                        for (const p of products) {
+                          await updateDoc(doc(db, 'perfumes', p.id), { status: false });
+                        }
+                        await fetchProducts();
+                        setLoading(false);
+                      }
+                    });
+                    setModalOpen(true);
                   }}
                   className="px-3 py-1.5 text-xs bg-red-100 text-red-600 hover:bg-red-200 transition-colors rounded"
                 >
                   Todo OFF
                 </button>
                 <button
-                  onClick={async () => {
-                    if (!confirm('¿Poner toda la tienda en ON?')) return;
-                    setLoading(true);
-                    for (const p of products) {
-                      await updateDoc(doc(db, 'perfumes', p.id), { status: true });
-                    }
-                    await fetchProducts();
-                    setLoading(false);
+                  onClick={() => {
+                    setModalConfig({
+                      title: 'Activar Todo',
+                      message: '¿Estás seguro de que quieres activar todos los productos? Todos aparecerán en la tienda.',
+                      confirmText: 'Activar Todo',
+                      cancelText: 'Cancelar',
+                      danger: false,
+                      onConfirm: async () => {
+                        setModalOpen(false);
+                        setLoading(true);
+                        for (const p of products) {
+                          await updateDoc(doc(db, 'perfumes', p.id), { status: true });
+                        }
+                        await fetchProducts();
+                        setLoading(false);
+                      }
+                    });
+                    setModalOpen(true);
                   }}
                   className="px-3 py-1.5 text-xs bg-green-100 text-green-600 hover:bg-green-200 transition-colors rounded"
                 >
                   Todo ON
                 </button>
                 <button
+                  onClick={() => applyDiscountToAll(10)}
+                  className="px-3 py-1.5 text-xs bg-yellow-100 text-yellow-700 hover:bg-yellow-200 transition-colors rounded"
+                >
+                  -10%
+                </button>
+                <button
                   onClick={() => applyDiscountToAll(20)}
                   className="px-3 py-1.5 text-xs bg-yellow-100 text-yellow-700 hover:bg-yellow-200 transition-colors rounded"
                 >
-                  -20% Todo
+                  -20%
                 </button>
                 <button
                   onClick={() => applyDiscountToAll(30)}
                   className="px-3 py-1.5 text-xs bg-orange-100 text-orange-700 hover:bg-orange-200 transition-colors rounded"
                 >
-                  -30% Todo
+                  -30%
+                </button>
+                <button
+                  onClick={() => applyDiscountToAll(40)}
+                  className="px-3 py-1.5 text-xs bg-orange-100 text-orange-700 hover:bg-orange-200 transition-colors rounded"
+                >
+                  -40%
+                </button>
+                <button
+                  onClick={() => applyDiscountToAll(50)}
+                  className="px-3 py-1.5 text-xs bg-red-100 text-red-700 hover:bg-red-200 transition-colors rounded"
+                >
+                  -50%
                 </button>
                 <button
                   onClick={removeAllDiscounts}
@@ -761,6 +886,17 @@ export default function Dashboard() {
           </div>
         </div>
       </main>
+
+      <ConfirmModal
+        isOpen={modalOpen}
+        title={modalConfig.title}
+        message={modalConfig.message}
+        confirmText={modalConfig.confirmText}
+        cancelText={modalConfig.cancelText}
+        danger={modalConfig.danger}
+        onConfirm={modalConfig.onConfirm}
+        onCancel={() => setModalOpen(false)}
+      />
 
       <Footer />
     </div>
